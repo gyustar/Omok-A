@@ -10,7 +10,4 @@
 * 오목이 아닐 경우, 게임이 계속 진행되고, 오목일 경우 승자가 표시되고 게임이 종료된다.
 * 게임이 종료되면 ‘READY’ 버튼이 ‘RESTART’ 버튼으로 변경되고, ‘RESTART’ 버튼을 누르면 초기화면으로 돌아간다.
 
-<figure>
-<iframe src=“//https://docs.google.com/presentation/d/e/2PACX-1vRX5p68FQW-7mTU6K1CRbsttJpKmnpQy6_72vTVD8czQ63uOwMXhgYLpZxUNkifBXQFr1U47t1OdaoT/pub?start=false&loop=false&delayms=60000" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
-</figure>
-
+https://docs.google.com/presentation/d/e/2PACX-1vRX5p68FQW-7mTU6K1CRbsttJpKmnpQy6_72vTVD8czQ63uOwMXhgYLpZxUNkifBXQFr1U47t1OdaoT/pub?start=false&loop=false&delayms=60000
