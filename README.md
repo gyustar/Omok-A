@@ -1,5 +1,4 @@
-
-
+# JON (Java Omok Network)
 * 초기화면에 두 사용자가 서버에 연결 되면, ‘READY’ 버튼이 활성화된다.
 * 두 사용자 모두 활성화된 ‘READY’ 버튼을 클릭하면, 3초 후 주사위를 굴린다.
 * 큰 값이 나온 사용자는 흑돌, 작은 값이 나온 사용자는 백돌로 배정이 된다.
@@ -10,4 +9,4 @@
 * 오목이 아닐 경우, 게임이 계속 진행되고, 오목일 경우 승자가 표시되고 게임이 종료된다.
 * 게임이 종료되면 ‘READY’ 버튼이 ‘RESTART’ 버튼으로 변경되고, ‘RESTART’ 버튼을 누르면 초기화면으로 돌아간다.
 
-https://docs.google.com/presentation/d/e/2PACX-1vRX5p68FQW-7mTU6K1CRbsttJpKmnpQy6_72vTVD8czQ63uOwMXhgYLpZxUNkifBXQFr1U47t1OdaoT/pub?start=false&loop=false&delayms=60000
+* https://docs.google.com/presentation/d/e/2PACX-1vRX5p68FQW-7mTU6K1CRbsttJpKmnpQy6_72vTVD8czQ63uOwMXhgYLpZxUNkifBXQFr1U47t1OdaoT/pub?start=false&loop=false&delayms=60000
