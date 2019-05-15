@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-// (60,60) (480,60) (60,480), (480,480)
-
 public class OmokClient extends PApplet {
     private static final int BLOCK = 30;
     private static final int GAP = BLOCK / 2;
@@ -18,11 +16,17 @@ public class OmokClient extends PApplet {
     private static final int BUTTON_H = BLOCK * 2;
     private static final int WINDOW_W = BOARD + BLOCK * 2;
     private static final int WINDOW_H = BOARD + BLOCK * 3 + BUTTON_H * 3 + GAP * 2;
-    private static boolean[] readyColor = new boolean[2];
+    private boolean[] readyColor = new boolean[2];
+    private Button button;
 
     @Override
     public void setup() {
-
+        button = new Button.Builder("READY")
+                .positionX(BLOCK)
+                .positionY(WINDOW_H - BLOCK - BUTTON_H)
+                .width(BUTTON_W)
+                .height(BUTTON_H)
+                .build();
     }
 
     @Override
@@ -32,16 +36,14 @@ public class OmokClient extends PApplet {
 
     @Override
     public void draw() {
-
         background(255);
 
         for (int i = 0; i < 2; ++i) {
             fill(255);
             rect(BLOCK, BOARD + 2 * BLOCK + (BUTTON_H + GAP) * i, BUTTON_W, BUTTON_H);
 
-            if (readyColor[i]) fill(0);
-            else fill(137);
-
+            if (readyColor[i]) fill (0);
+            else fill(220);
             textSize(20);
             textAlign(CENTER, CENTER);
             text("READY", BOARD - BLOCK, 3 * BLOCK + BOARD + (BUTTON_H + GAP) * i - 3);
@@ -50,15 +52,31 @@ public class OmokClient extends PApplet {
             text("PLAYER " + (i + 1), BLOCK * 4, 3 * BLOCK + BOARD + (BUTTON_H + GAP) * i - 3);
         }
 
+        button.draw(this);
+        if (button.isMouseOver(this)) cursor(HAND);
+        else cursor(ARROW);
+
         fill(203, 164, 85);
         rect(BLOCK, BLOCK, BOARD, BOARD);
         for (int i = 0; i < 15; ++i) {
             line(2 * BLOCK, (2 + i) * BLOCK, 16 * BLOCK, (2 + i) * BLOCK);
             line((2 + i) * BLOCK, 2 * BLOCK, (2 + i) * BLOCK, 16 * BLOCK);
-
-
         }
     }
+
+    @Override
+    public void mousePressed() {
+        if (button.isMouseOver(this)) button.onClick();
+    }
+
+    @Override
+    public void mouseReleased() {
+        if (button.isMouseOver(this)) {
+            button.onRelease();
+            button.changeActivation();
+        }
+    }
+
 
     public static void main(String[] args) {
         Socket socket;
