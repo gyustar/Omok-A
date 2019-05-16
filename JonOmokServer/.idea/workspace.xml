@@ -18,8 +18,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/jon/server/OmokServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="318">
-              <caret line="20" column="21" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
+            <state relative-caret-position="252">
+              <caret line="20" column="54" lean-forward="true" selection-start-line="20" selection-start-column="54" selection-end-line="20" selection-end-column="54" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -35,8 +35,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/jon/server/ServerThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="11" column="50" selection-start-line="11" selection-start-column="50" selection-end-line="11" selection-end-column="50" />
+            <state relative-caret-position="-234">
+              <caret line="16" column="28" lean-forward="true" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -47,8 +47,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/jon/client/ClientThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="292">
-              <caret line="31" column="51" lean-forward="true" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
+            <state relative-caret-position="306">
+              <caret line="39" column="57" selection-start-line="39" selection-start-column="57" selection-end-line="39" selection-end-column="57" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -56,15 +56,14 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/jon/client/OmokClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-47">
-              <caret line="45" column="24" selection-start-line="45" selection-start-column="24" selection-end-line="45" selection-end-column="24" />
+            <state relative-caret-position="-109">
+              <caret line="59" column="9" selection-start-line="59" selection-start-column="9" selection-end-line="59" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2046#2047#0" expanded="true" />
-                <element signature="e#2108#2109#0" expanded="true" />
+                <element signature="e#2344#2345#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -73,8 +72,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/jon/client/Button.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="11">
-              <caret line="59" column="45" selection-start-line="59" selection-start-column="45" selection-end-line="59" selection-end-column="45" />
+            <state relative-caret-position="234">
+              <caret line="79" column="5" selection-start-line="79" selection-start-column="5" selection-end-line="79" selection-end-column="5" />
               <folding>
                 <element signature="e#614#615#0" expanded="true" />
                 <element signature="e#658#659#0" expanded="true" />
@@ -84,19 +83,23 @@
                 <element signature="e#1696#1697#0" expanded="true" />
                 <element signature="e#1722#1723#0" expanded="true" />
                 <element signature="e#1751#1752#0" expanded="true" />
-                <element signature="e#1638#1639#0" expanded="true" />
-                <element signature="e#1688#1689#0" expanded="true" />
+                <element signature="e#1813#1814#0" expanded="true" />
+                <element signature="e#1846#1847#0" expanded="true" />
+                <element signature="e#1878#1879#0" expanded="true" />
+                <element signature="e#1916#1917#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/jon/data/Protocol.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="456">
-              <caret line="33" column="1" selection-start-line="33" selection-start-column="1" selection-end-line="33" selection-end-column="1" />
+            <state relative-caret-position="513">
+              <caret line="35" column="23" selection-start-line="35" selection-start-column="23" selection-end-line="35" selection-end-column="23" />
               <folding>
+                <element signature="e#1027#1028#0" expanded="true" />
+                <element signature="e#1056#1057#0" expanded="true" />
                 <element signature="e#778#779#0" expanded="true" />
                 <element signature="e#810#811#0" expanded="true" />
                 <element signature="e#847#848#0" expanded="true" />
@@ -143,9 +146,9 @@
         <option value="$PROJECT_DIR$/src/com/jon/OmokServer.java" />
         <option value="$PROJECT_DIR$/src/com/jon/Protocol.java" />
         <option value="$PROJECT_DIR$/src/com/jon/data/Protocol.java" />
-        <option value="$PROJECT_DIR$/src/com/jon/client/ClientThread.java" />
         <option value="$PROJECT_DIR$/src/com/jon/server/ServerThread.java" />
         <option value="$PROJECT_DIR$/src/com/jon/server/OmokServer.java" />
+        <option value="$PROJECT_DIR$/src/com/jon/client/ClientThread.java" />
         <option value="$PROJECT_DIR$/src/com/jon/client/Button.java" />
         <option value="$PROJECT_DIR$/src/com/jon/client/OmokClient.java" />
       </list>
@@ -236,7 +239,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Application.OmokClient">
-    <configuration name="OmokClient" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="OmokClient" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.jon.client.OmokClient" />
       <module name="JonOmokServer" />
       <extension name="coverage">
@@ -262,6 +265,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.OmokClient" />
+      <item itemvalue="Application.OmokServer" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.OmokClient" />
@@ -291,7 +298,7 @@
       <window_info id="UI Designer" />
       <window_info id="Capture Tool" />
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24964234" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24964234" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Terminal" />
@@ -299,7 +306,7 @@
       <window_info anchor="bottom" id="Messages" weight="0.32891566" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32891566" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.33012047" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -315,26 +322,10 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/JonOmokServer.iml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/jon/data/GameStatus.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
           <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/jon/data/Protocol.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="33" column="1" selection-start-line="33" selection-start-column="1" selection-end-line="33" selection-end-column="1" />
-          <folding>
-            <element signature="e#778#779#0" expanded="true" />
-            <element signature="e#810#811#0" expanded="true" />
-            <element signature="e#847#848#0" expanded="true" />
-            <element signature="e#898#899#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -345,20 +336,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/jon/server/ServerThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="50" selection-start-line="11" selection-start-column="50" selection-end-line="11" selection-end-column="50" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/JonOmokServer.iml">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/jon/client/ClientThread.java">
+    <entry file="file://$PROJECT_DIR$/src/com/jon/server/OmokServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="31" column="51" lean-forward="true" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
+        <state relative-caret-position="252">
+          <caret line="20" column="54" lean-forward="true" selection-start-line="20" selection-start-column="54" selection-end-line="20" selection-end-column="54" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -367,8 +351,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/jon/client/Button.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11">
-          <caret line="59" column="45" selection-start-line="59" selection-start-column="45" selection-end-line="59" selection-end-column="45" />
+        <state relative-caret-position="234">
+          <caret line="79" column="5" selection-start-line="79" selection-start-column="5" selection-end-line="79" selection-end-column="5" />
           <folding>
             <element signature="e#614#615#0" expanded="true" />
             <element signature="e#658#659#0" expanded="true" />
@@ -378,30 +362,56 @@
             <element signature="e#1696#1697#0" expanded="true" />
             <element signature="e#1722#1723#0" expanded="true" />
             <element signature="e#1751#1752#0" expanded="true" />
-            <element signature="e#1638#1639#0" expanded="true" />
-            <element signature="e#1688#1689#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/jon/server/OmokServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="318">
-          <caret line="20" column="21" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
-          <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#1813#1814#0" expanded="true" />
+            <element signature="e#1846#1847#0" expanded="true" />
+            <element signature="e#1878#1879#0" expanded="true" />
+            <element signature="e#1916#1917#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/jon/client/OmokClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-47">
-          <caret line="45" column="24" selection-start-line="45" selection-start-column="24" selection-end-line="45" selection-end-column="24" />
+        <state relative-caret-position="-109">
+          <caret line="59" column="9" selection-start-line="59" selection-start-column="9" selection-end-line="59" selection-end-column="9" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2046#2047#0" expanded="true" />
-            <element signature="e#2108#2109#0" expanded="true" />
+            <element signature="e#2344#2345#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/jon/server/ServerThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-234">
+          <caret line="16" column="28" lean-forward="true" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/jon/client/ClientThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="39" column="57" selection-start-line="39" selection-start-column="57" selection-end-line="39" selection-end-column="57" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/jon/data/Protocol.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="35" column="23" selection-start-line="35" selection-start-column="23" selection-end-line="35" selection-end-column="23" />
+          <folding>
+            <element signature="e#1027#1028#0" expanded="true" />
+            <element signature="e#1056#1057#0" expanded="true" />
+            <element signature="e#778#779#0" expanded="true" />
+            <element signature="e#810#811#0" expanded="true" />
+            <element signature="e#847#848#0" expanded="true" />
+            <element signature="e#898#899#0" expanded="true" />
           </folding>
         </state>
       </provider>

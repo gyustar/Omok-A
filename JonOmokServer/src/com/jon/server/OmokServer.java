@@ -15,7 +15,7 @@ public class OmokServer {
             serverSocket = new ServerSocket();
             InetAddress local = InetAddress.getLocalHost();
             serverSocket.bind(new InetSocketAddress(local.getHostAddress(), 5000));
-            System.out.println("서버 열림: " + local.getHostName() + "\n");
+            System.out.println("서버 열림: " + local.getHostAddress() + "\n");
 
             while (n!= 3) {
                 Socket socket = serverSocket.accept();

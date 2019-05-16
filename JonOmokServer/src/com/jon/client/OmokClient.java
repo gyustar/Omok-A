@@ -16,6 +16,8 @@ public class OmokClient extends PApplet {
     private static final int BUTTON_H = BLOCK * 2;
     private static final int WINDOW_W = BOARD + BLOCK * 2;
     private static final int WINDOW_H = BOARD + BLOCK * 3 + BUTTON_H * 3 + GAP * 2;
+    private static int players = 0;
+    private static int id = 0;
     private boolean[] readyColor = new boolean[2];
     private Button button;
 
@@ -38,7 +40,7 @@ public class OmokClient extends PApplet {
     public void draw() {
         background(255);
 
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < players; ++i) {
             fill(255);
             rect(BLOCK, BOARD + 2 * BLOCK + (BUTTON_H + GAP) * i, BUTTON_W, BUTTON_H);
 
@@ -50,6 +52,11 @@ public class OmokClient extends PApplet {
 
             fill(0);
             text("PLAYER " + (i + 1), BLOCK * 4, 3 * BLOCK + BOARD + (BUTTON_H + GAP) * i - 3);
+
+            if (id == i + 1) {
+                fill(93,214,32);
+                ellipse(BLOCK * 6, 3 * BLOCK + BOARD + (BUTTON_H + GAP) * i, 5, 5);
+            }
         }
 
         button.draw(this);
@@ -73,10 +80,14 @@ public class OmokClient extends PApplet {
     public void mouseReleased() {
         if (button.isMouseOver(this)) {
             button.onRelease();
-            button.changeActivation();
+            button.unactiveButton();
         }
     }
 
+    static void setPlayers(int n) {
+        if (id == 0) id = n;
+        players = n;
+    }
 
     public static void main(String[] args) {
         Socket socket;

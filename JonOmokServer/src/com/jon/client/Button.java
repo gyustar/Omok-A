@@ -5,7 +5,7 @@ import processing.core.PApplet;
 class Button {
     private String label;
     private int color = 255;
-    private boolean activation = true;
+    private boolean activation = false;
     private int x;
     private int y;
     private int w;
@@ -79,8 +79,12 @@ class Button {
         this.color = 255;
     }
 
-    void changeActivation() {
-        this.activation = !this.activation;
+    void activeButton() {
+        this.activation = true;
+    }
+
+    void unactiveButton() {
+        this.activation = false;
     }
 
     void changeLabel() {

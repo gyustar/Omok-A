@@ -33,11 +33,13 @@ public class ClientThread extends Thread {
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
-            if (data.getStatus() == GameStatus.ALL_ENTRANCE) {
-                System.out.println("모두 접속");
+
+            if (data.getStatus() == GameStatus.DEFAULT) {
+                OmokClient.setPlayers(data.getPlayers());
+            } else if (data.getStatus() == GameStatus.ALL_ENTRANCE) {
+                OmokClient.setPlayers(data.getPlayers());
             }
         }
-
     }
 }
 
