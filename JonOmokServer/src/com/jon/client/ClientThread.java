@@ -35,9 +35,10 @@ public class ClientThread extends Thread {
             }
 
             if (data.getStatus() == GameStatus.DEFAULT) {
-                OmokClient.setPlayers(data.getPlayers());
+                OmokClient.setPlayers(1);
             } else if (data.getStatus() == GameStatus.ALL_ENTRANCE) {
-                OmokClient.setPlayers(data.getPlayers());
+                System.out.println("test");
+                OmokClient.setPlayers(2);
             }
         }
     }

@@ -17,7 +17,7 @@ public class OmokServer {
             serverSocket.bind(new InetSocketAddress(local.getHostAddress(), 5000));
             System.out.println("서버 열림: " + local.getHostAddress() + "\n");
 
-            while (n!= 3) {
+            while (true) {
                 Socket socket = serverSocket.accept();
                 InetSocketAddress socketAddress =
                         (InetSocketAddress) socket.getRemoteSocketAddress();
@@ -25,8 +25,6 @@ public class OmokServer {
                 clients[n] = new ServerThread(socket);
                 clients[n++].start();
             }
-
-            serverSocket.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

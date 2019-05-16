@@ -7,40 +7,36 @@ public class Protocol implements Serializable {
     private static final int WHITE = -1;
     private static final int NONE = 0;
     private GameStatus gameStatus; // DEFAULT, ALL_ENTRANCE, ALL_READY, RUNNING, END
-    private ClientStatus clientStatus; // READY, RESTART, NO_READY
-    private int players;
-    private int dice;
-    private boolean isBlack;
-    private boolean turnBlack;
-    private int[] stone;
-    private int winner; // BLACK, WHITE, NONE
+    private boolean entrance[];
+    private boolean ready[];
+    private boolean restart[];
+    private int dice[];
+    private int color[];
+    private int stoneIndex[];
+//    private boolean isBlack;
+//    private int turn;
+    private int winner;
 
     public Protocol() {
         gameStatus = GameStatus.DEFAULT;
-        clientStatus = ClientStatus.NO_READY;
-        dice = 0;
-        isBlack = false;
-        turnBlack = true;
-        stone = new int[2];
+        entrance = new boolean[2];
+        ready = new boolean[2];
+        restart = new boolean[2];
+        dice = new int[2];
+        color = new int[2];
+        stoneIndex = new int[2];
+//        isBlack = false;
+//        turn = 0;
         winner = NONE;
-        players = 0;
     }
 
-    public void setPlayers(int players) {
-        if(players == 1) this.players = players;
-        else if (players == 2) this.players = players;
-        else this.players = 0;
-    }
-
-    public int getPlayers() {
-        return players;
+    public void entrancePlayer(int id) {
+        entrance[id] = true;
+        if (entrance[0] && entrance[1])
+            gameStatus = GameStatus.ALL_ENTRANCE;
     }
 
     public GameStatus getStatus() {
         return gameStatus;
-    }
-
-    public void allEntrance() {
-        gameStatus = GameStatus.ALL_ENTRANCE;
     }
 }

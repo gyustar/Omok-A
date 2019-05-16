@@ -13,18 +13,17 @@ public class ServerThread extends Thread {
     private static int n = 0;
     private static Socket[] sockets = new Socket[2];
     private static ObjectOutputStream[] ooss = new ObjectOutputStream[2];
+    private static Protocol data = new Protocol();;
     private int id;
     private Socket mySocket;
-    private Protocol data;
     private ObjectInputStream ois;
 
     ServerThread(Socket socket) {
         this.mySocket = socket;
         synchronized (MUTEX) {
             sockets[n] = socket;
-            this.data = new Protocol();
             this.id = n;
-
+            data.entrancePlayer(this.id);
             try {
                 this.ois = new ObjectInputStream(socket.getInputStream());
                 ooss[n++] = new ObjectOutputStream(socket.getOutputStream());
@@ -49,18 +48,13 @@ public class ServerThread extends Thread {
     @Override
     public void run() {
         while (true) {
-            if (data.getStatus() == GameStatus.DEFAULT) {
-                synchronized (MUTEX) {
-                    if (n == 1) {
-                        data.setPlayers(n);
-                        broadcast(data);
-                    } else if (n == 2) {
-                        data.setPlayers(n);
-                        data.allEntrance();
-                        broadcast(data);
-                    }
+//            synchronized (MUTEX) {
+                if (data.getStatus() == GameStatus.DEFAULT) {
+                    broadcast(data);
+                } else if (data.getStatus() == GameStatus.ALL_ENTRANCE) {
+                    broadcast(data);
                 }
-            }
+//            }
         }
     }
 }
