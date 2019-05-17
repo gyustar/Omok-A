@@ -2,24 +2,21 @@ package com.jon.client;
 
 import com.jon.data.*;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
-
 
 public class ClientThread extends Thread {
     private Socket socket;
-    private Protocol data;
-    private ObjectOutputStream oos;
-    private ObjectInputStream ois;
-
+    private byte[] data;
+    private OutputStream os;
+    private InputStream is;
 
     ClientThread(Socket socket) {
         this.socket = socket;
+        data = new byte[Protocol.SIZE.ordinal()];
         try {
-            this.oos = new ObjectOutputStream(socket.getOutputStream());
-            this.ois = new ObjectInputStream(socket.getInputStream());
+            this.os = socket.getOutputStream();
+            this.is = socket.getInputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -29,18 +26,22 @@ public class ClientThread extends Thread {
     public void run() {
         while (true) {
             try {
-                data = (Protocol) ois.readObject();
-            } catch (IOException | ClassNotFoundException e) {
+                int ret = is.read(data);
+                if (ret == -1) {
+                    throw new IOException();
+                }
+                System.out.println("received");
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            if (data.getStatus() == GameStatus.DEFAULT) {
+            if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.DEFAULT.ordinal()) {
+                System.out.println("1");
                 OmokClient.setPlayers(1);
-            } else if (data.getStatus() == GameStatus.ALL_ENTRANCE) {
-                System.out.println("test");
+            } else if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.ALL_ENTER.ordinal()) {
+                System.out.println("2");
                 OmokClient.setPlayers(2);
             }
         }
     }
 }
-

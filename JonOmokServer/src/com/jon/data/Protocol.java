@@ -1,42 +1,26 @@
 package com.jon.data;
 
-import java.io.Serializable;
+public enum Protocol {
+    GAMESTATUS, // 0
+    ENTER_0, // 1
+    ENTER_1, // 2
+    READY_0, // 3
+    READY_1, // 4
+    RESTART_0, // 5
+    RESTART_1, // 6
+    DICE_0, // 7
+    DICE_1, // 8
+    COLOR_0, // 9
+    COLOR_1, // 10
+    STONE_I, // 11
+    STONE_J, // 12
+    TURN, // 13
+    WINNER, // 14
+    SIZE, // 15
 
-public class Protocol implements Serializable {
-    private static final int BLACK = 1;
-    private static final int WHITE = -1;
-    private static final int NONE = 0;
-    private GameStatus gameStatus; // DEFAULT, ALL_ENTRANCE, ALL_READY, RUNNING, END
-    private boolean entrance[];
-    private boolean ready[];
-    private boolean restart[];
-    private int dice[];
-    private int color[];
-    private int stoneIndex[];
-//    private boolean isBlack;
-//    private int turn;
-    private int winner;
-
-    public Protocol() {
-        gameStatus = GameStatus.DEFAULT;
-        entrance = new boolean[2];
-        ready = new boolean[2];
-        restart = new boolean[2];
-        dice = new int[2];
-        color = new int[2];
-        stoneIndex = new int[2];
-//        isBlack = false;
-//        turn = 0;
-        winner = NONE;
-    }
-
-    public void entrancePlayer(int id) {
-        entrance[id] = true;
-        if (entrance[0] && entrance[1])
-            gameStatus = GameStatus.ALL_ENTRANCE;
-    }
-
-    public GameStatus getStatus() {
-        return gameStatus;
-    }
+    DEFAULT, // 16
+    ALL_ENTER, // 17
+    ALL_READY, // 18
+    RUNNING, // 19
+    END, // 20
 }

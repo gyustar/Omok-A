@@ -1,43 +1,49 @@
 package com.jon.server;
 
-import com.jon.data.GameStatus;
-import com.jon.data.Protocol;
+import com.jon.data.*;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ServerThread extends Thread {
     private static final Object MUTEX = new Object();
     private static int n = 0;
     private static Socket[] sockets = new Socket[2];
-    private static ObjectOutputStream[] ooss = new ObjectOutputStream[2];
-    private static Protocol data = new Protocol();;
+    private static OutputStream[] oss = new OutputStream[2];
+    private static byte[] data = new byte[Protocol.SIZE.ordinal()];
     private int id;
     private Socket mySocket;
-    private ObjectInputStream ois;
+    private InputStream is;
 
     ServerThread(Socket socket) {
         this.mySocket = socket;
         synchronized (MUTEX) {
             sockets[n] = socket;
             this.id = n;
-            data.entrancePlayer(this.id);
+
+            if (this.id == 0) {
+                data[Protocol.ENTER_0.ordinal()] = 1;
+                data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.DEFAULT.ordinal();
+            } else if (this.id == 1) {
+                data[Protocol.ENTER_1.ordinal()] = 1;
+                data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.ALL_ENTER.ordinal();
+            }
+
             try {
-                this.ois = new ObjectInputStream(socket.getInputStream());
-                ooss[n++] = new ObjectOutputStream(socket.getOutputStream());
+                this.is = socket.getInputStream();
+                oss[n++] = socket.getOutputStream();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    void broadcast(Protocol data) {
+    void broadcast(byte[] data) {
         synchronized (MUTEX) {
             for (int i = 0; i < n; ++i) {
                 try {
-                    ooss[i].writeObject(data);
+                    oss[i].write(data);
+                    oss[i].flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -48,13 +54,23 @@ public class ServerThread extends Thread {
     @Override
     public void run() {
         while (true) {
-//            synchronized (MUTEX) {
-                if (data.getStatus() == GameStatus.DEFAULT) {
-                    broadcast(data);
-                } else if (data.getStatus() == GameStatus.ALL_ENTRANCE) {
-                    broadcast(data);
+            if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.DEFAULT.ordinal()) {
+                System.out.println("default");
+                broadcast(data);
+                while (true) {
+                    if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.ALL_ENTER.ordinal()) {
+                        break;
+                    }
                 }
-//            }
+            } else if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.ALL_ENTER.ordinal()) {
+                System.out.println("entrance");
+                broadcast(data);
+                while (true) {
+                    if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.ALL_READY.ordinal()) {
+                        break;
+                    }
+                }
+            }
         }
     }
 }
