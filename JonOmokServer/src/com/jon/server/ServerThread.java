@@ -3,21 +3,26 @@ package com.jon.server;
 import com.jon.data.*;
 
 import java.io.*;
-import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
 
 public class ServerThread extends Thread {
     private static final Object MUTEX = new Object();
     private static int n = 0;
     private static byte[] data = new byte[Protocol.SIZE.ordinal()];
     private int id;
-    private static Socket[] sockets = new Socket[2];
-    private Socket socket;
+    private static SocketChannel[] scs = new SocketChannel[2];
+    private SocketChannel socketChannel;
+    private static ServerThread[] clients = new ServerThread[2];
 
-    ServerThread(Socket socket) {
+    ServerThread(SocketChannel socketChannel, ServerThread[] cl) {
         synchronized (MUTEX) {
+            clients = cl;
+            clients[n] = this;
             this.id = n;
-            sockets[n++] = socket;
-            this.socket = socket;
+            scs[n++] = socketChannel;
+            this.socketChannel = socketChannel;
             if (this.id == 0) {
                 data[Protocol.ENTER_0.ordinal()] = 1;
                 data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.DEFAULT.ordinal();
@@ -28,30 +33,45 @@ public class ServerThread extends Thread {
         }
     }
 
+//    private void broadcast() {
+//        synchronized (MUTEX) {
+//            for (int i = 0; i < n; ++i) {
+//                try {
+//                    ByteBuffer buffer = ByteBuffer.allocate(data.length);
+//                    buffer.put(data);
+//                    scs[i].write(buffer);
+//                    System.out.println("보냄" + i);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
+
     private void broadcast() {
         synchronized (MUTEX) {
             for (int i = 0; i < n; ++i) {
                 try {
-                    OutputStream os = sockets[i].getOutputStream();
-                    os.write(data);
-                    os.flush();
+                    ByteBuffer buffer = ByteBuffer.allocate(data.length);
+                    buffer.put(data);
+                    clients[i].socketChannel.write(buffer);
+//                    scs[i].write(buffer);
+                    System.out.println("보냄" + i);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-        System.out.println("보냄");
     }
 
     private void inputData() {
         synchronized (MUTEX) {
             try {
-                InputStream is = socket.getInputStream();
-                int ret = is.read(data);
+                ByteBuffer buffer = ByteBuffer.allocate(data.length);
+                scs[id].read(buffer);
+                buffer.flip();
+                data = buffer.array();
                 System.out.println("받음");
-                if (ret == -1) {
-                    System.out.println("ret");
-                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -4,25 +4,28 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 
 public class OmokServer {
     public static void main(String[] args) {
         int n = 0;
-        Thread[] clients = new ServerThread[2];
+        ServerThread[] clients = new ServerThread[2];
 
-        ServerSocket serverSocket;
+        ServerSocketChannel serverSocketChannel;
         try {
-            serverSocket = new ServerSocket();
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.configureBlocking(true);
             InetAddress local = InetAddress.getLocalHost();
-            serverSocket.bind(new InetSocketAddress(local.getHostAddress(), 5000));
+            serverSocketChannel.bind(new InetSocketAddress(local.getHostAddress(), 5000));
             System.out.println("서버 열림: " + local.getHostAddress() + "\n");
 
             while (true) {
-                Socket socket = serverSocket.accept();
+                SocketChannel socketChannel = serverSocketChannel.accept();
                 InetSocketAddress socketAddress =
-                        (InetSocketAddress) socket.getRemoteSocketAddress();
+                        (InetSocketAddress) socketChannel.getRemoteAddress();
                 System.out.println(socketAddress.getHostName() + " 입장\n");
-                clients[n] = new ServerThread(socket);
+                clients[n] = new ServerThread(socketChannel, clients);
                 clients[n++].start();
             }
         } catch (Exception e) {

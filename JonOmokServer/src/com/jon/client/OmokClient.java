@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 
 public class OmokClient extends PApplet {
     private static final int BLOCK = 30;
@@ -24,7 +26,7 @@ public class OmokClient extends PApplet {
     private static Button button;
     private static byte[] data = new byte[Protocol.SIZE.ordinal()];
     private static boolean[] ready = new boolean[2];
-    private static Socket socket;
+    private static SocketChannel socketChannel;
 
     @Override
     public void setup() {
@@ -129,9 +131,10 @@ public class OmokClient extends PApplet {
 
     private static void outputData() {
         try {
-            OutputStream os = socket.getOutputStream();
-            os.write(data);
-            os.flush();
+            ByteBuffer buffer = ByteBuffer.allocate(data.length);
+            buffer.put(data);
+            socketChannel.read(buffer);
+//            buffer.flip();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -146,11 +149,11 @@ public class OmokClient extends PApplet {
                 .build();
 
         try {
-            socket = new Socket();
-            socket.connect(new InetSocketAddress("192.168.11.27", 5000));
+            socketChannel = SocketChannel.open();
+            socketChannel.configureBlocking(true);
+            socketChannel.connect(new InetSocketAddress("192.168.11.27", 5000));
             System.out.println("연결 성공\n");
-
-            Thread thread = new ClientThread(socket);
+            Thread thread = new ClientThread(socketChannel);
             thread.start();
         } catch (IOException e) {
             e.printStackTrace();
