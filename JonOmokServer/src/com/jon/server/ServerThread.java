@@ -8,19 +8,16 @@ import java.net.Socket;
 public class ServerThread extends Thread {
     private static final Object MUTEX = new Object();
     private static int n = 0;
-    private static Socket[] sockets = new Socket[2];
-    private static OutputStream[] oss = new OutputStream[2];
     private static byte[] data = new byte[Protocol.SIZE.ordinal()];
     private int id;
-    private Socket mySocket;
-    private InputStream is;
+    private static Socket[] sockets = new Socket[2];
+    private Socket socket;
 
     ServerThread(Socket socket) {
-        this.mySocket = socket;
         synchronized (MUTEX) {
-            sockets[n] = socket;
             this.id = n;
-
+            sockets[n++] = socket;
+            this.socket = socket;
             if (this.id == 0) {
                 data[Protocol.ENTER_0.ordinal()] = 1;
                 data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.DEFAULT.ordinal();
@@ -28,25 +25,35 @@ public class ServerThread extends Thread {
                 data[Protocol.ENTER_1.ordinal()] = 1;
                 data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.ALL_ENTER.ordinal();
             }
-
-            try {
-                this.is = socket.getInputStream();
-                oss[n++] = socket.getOutputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
-    void broadcast(byte[] data) {
+    private void broadcast() {
         synchronized (MUTEX) {
             for (int i = 0; i < n; ++i) {
                 try {
-                    oss[i].write(data);
-                    oss[i].flush();
+                    OutputStream os = sockets[i].getOutputStream();
+                    os.write(data);
+                    os.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+        System.out.println("보냄");
+    }
+
+    private void inputData() {
+        synchronized (MUTEX) {
+            try {
+                InputStream is = socket.getInputStream();
+                int ret = is.read(data);
+                System.out.println("받음");
+                if (ret == -1) {
+                    System.out.println("ret");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -56,7 +63,7 @@ public class ServerThread extends Thread {
         while (true) {
             if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.DEFAULT.ordinal()) {
                 System.out.println("default");
-                broadcast(data);
+                broadcast();
                 while (true) {
                     if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.ALL_ENTER.ordinal()) {
                         break;
@@ -64,7 +71,11 @@ public class ServerThread extends Thread {
                 }
             } else if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.ALL_ENTER.ordinal()) {
                 System.out.println("entrance");
-                broadcast(data);
+                broadcast();
+                inputData();
+                broadcast();
+                inputData();
+                broadcast();
                 while (true) {
                     if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.ALL_READY.ordinal()) {
                         break;
