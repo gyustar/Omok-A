@@ -43,7 +43,26 @@ public class OmokClient extends PApplet {
     @Override
     public void draw() {
         background(255);
+        drawPlayerList();
+        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.RUNNING.ordinal())
+            drawPlayerInfo();
+        button.draw(this);
+        if (button.isMouseOver(this)) cursor(HAND);
+        else cursor(ARROW);
+        drawGameBoard();
+        drawDice();
+    }
 
+    private void drawGameBoard() {
+        fill(203, 164, 85);
+        rect(BLOCK, BLOCK, BOARD, BOARD);
+        for (int i = 0; i < 15; ++i) {
+            line(2 * BLOCK, (2 + i) * BLOCK, 16 * BLOCK, (2 + i) * BLOCK);
+            line((2 + i) * BLOCK, 2 * BLOCK, (2 + i) * BLOCK, 16 * BLOCK);
+        }
+    }
+
+    private void drawPlayerList() {
         for (int i = 0; i < players; ++i) {
             fill(255);
             rect(BLOCK, BOARD + 2 * BLOCK + (BUTTON_H + GAP) * i, BUTTON_W, BUTTON_H);
@@ -62,17 +81,24 @@ public class OmokClient extends PApplet {
                 ellipse(BLOCK * 6, 3 * BLOCK + BOARD + (BUTTON_H + GAP) * i, 5, 5);
             }
         }
-        button.draw(this);
-        if (button.isMouseOver(this)) cursor(HAND);
-        else cursor(ARROW);
+    }
 
-        fill(203, 164, 85);
-        rect(BLOCK, BLOCK, BOARD, BOARD);
-        for (int i = 0; i < 15; ++i) {
-            line(2 * BLOCK, (2 + i) * BLOCK, 16 * BLOCK, (2 + i) * BLOCK);
-            line((2 + i) * BLOCK, 2 * BLOCK, (2 + i) * BLOCK, 16 * BLOCK);
+    private void drawPlayerInfo() {
+        if (data[Protocol.COLOR_0.ordinal()] == BLACK) {
+            fill(0);
+            ellipse(BLOCK * 7, 3 * BLOCK + BOARD, 20, 20);
+            fill(255);
+            ellipse(BLOCK * 7, 3 * BLOCK + BOARD + BUTTON_H + GAP, 20, 20);
+        } else {
+            fill(255);
+            ellipse(BLOCK * 7, 3 * BLOCK + BOARD, 20, 20);
+            fill(0);
+            ellipse(BLOCK * 7, 3 * BLOCK + BOARD + BUTTON_H + GAP, 20, 20);
         }
-        drawDice();
+
+        int k = data[Protocol.TURN.ordinal()];
+        fill(242, 65, 65);
+        rect(BLOCK, BOARD + 2 * BLOCK + (BUTTON_H + GAP) * k, BLOCK / 2, BUTTON_H);
     }
 
     private void drawDice() {
@@ -104,7 +130,8 @@ public class OmokClient extends PApplet {
                 textAlign(CENTER, CENTER);
                 text("START!", BLOCK + BOARD / 2, BLOCK + BOARD / 2 - 4);
             }
-        } else if (count == 0) outputData();
+        }
+        if (count <= 0) outputData();
     }
 
     @Override
@@ -154,6 +181,7 @@ public class OmokClient extends PApplet {
     }
 
     private static void whenRunning() {
+
 
     }
 

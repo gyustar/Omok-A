@@ -14,7 +14,7 @@ public enum Protocol {
     COLOR_1, // 10
     STONE_I, // 11
     STONE_J, // 12
-    TURN_COLOR, // 13
+    TURN, // 13
     WINNER, // 14
     SIZE, // 15
 

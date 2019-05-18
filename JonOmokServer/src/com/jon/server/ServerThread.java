@@ -31,6 +31,8 @@ public class ServerThread extends Thread {
                     t.data[Protocol.ENTER_0.ordinal()] = 1;
                     t.data[Protocol.ENTER_1.ordinal()] = 1;
                     t.data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.ALL_ENTER.ordinal();
+                    t.data[Protocol.STONE_I.ordinal()] = -1; // (0,0)은 가능한 인덱스이기 대문에 (-1, -1)로 초기화
+                    t.data[Protocol.STONE_J.ordinal()] = -1;
                 }
             }
         }
@@ -94,7 +96,9 @@ public class ServerThread extends Thread {
                 }
             } else if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.ALL_READY.ordinal()) {
                 data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.RUNNING.ordinal();
-                data[Protocol.TURN_COLOR.ordinal()] = (byte) BLACK;
+                if (data[Protocol.COLOR_0.ordinal()] == BLACK)
+                    data[Protocol.TURN.ordinal()] = (byte) 0;
+                else data[Protocol.TURN.ordinal()] = (byte) 1;
                 broadcast();
             } else if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.RUNNING.ordinal()) {
 
