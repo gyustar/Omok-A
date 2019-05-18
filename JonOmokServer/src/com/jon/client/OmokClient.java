@@ -14,6 +14,7 @@ public class OmokClient extends PApplet {
     private static final int WHITE = -1;
     private static final int NONE = 0;
     private static final int BLOCK = 30;
+    private static final int DIAMETER = BLOCK / 5 * 4;
     private static final int GAP = BLOCK / 2;
     private static final int BOARD = BLOCK * 16;
     private static final int RANGE = BLOCK / 6;
@@ -27,8 +28,8 @@ public class OmokClient extends PApplet {
     private static byte[] data = new byte[Protocol.SIZE.ordinal()];
     private static boolean[] ready = new boolean[2];
     private static Socket socket;
-    private static boolean countDown = false;
     private static int myColor = NONE;
+    private static byte[][] stones = new byte[15][15];
     private int count = 330;
 
     @Override
@@ -44,13 +45,19 @@ public class OmokClient extends PApplet {
     public void draw() {
         background(255);
         drawPlayerList();
-        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.RUNNING.ordinal())
-            drawPlayerInfo();
         button.draw(this);
-        if (button.isMouseOver(this)) cursor(HAND);
-        else cursor(ARROW);
+        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.RUNNING.ordinal()) {
+            drawPlayerInfo();
+            if (checkMouse()) cursor(HAND);
+            else cursor(ARROW);
+        } else {
+            if (button.isMouseOver(this)) cursor(HAND);
+            else cursor(ARROW);
+        }
         drawGameBoard();
-        drawDice();
+        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.ALL_READY.ordinal()) {
+            drawDice();
+        }
     }
 
     private void drawGameBoard() {
@@ -59,6 +66,17 @@ public class OmokClient extends PApplet {
         for (int i = 0; i < 15; ++i) {
             line(2 * BLOCK, (2 + i) * BLOCK, 16 * BLOCK, (2 + i) * BLOCK);
             line((2 + i) * BLOCK, 2 * BLOCK, (2 + i) * BLOCK, 16 * BLOCK);
+        }
+        for (int i = 0; i < 15; ++i) {
+            for (int j = 0; j < 15; ++j) {
+                if (stones[i][j] == BLACK) {
+                    fill(0);
+                    ellipse(BLOCK * (2 + j), BLOCK * (2 + i), DIAMETER, DIAMETER);
+                } else if (stones[i][j] == WHITE) {
+                    fill(255);
+                    ellipse(BLOCK * (2 + j), BLOCK * (2 + i), DIAMETER, DIAMETER);
+                }
+            }
         }
     }
 
@@ -102,7 +120,7 @@ public class OmokClient extends PApplet {
     }
 
     private void drawDice() {
-        if (countDown && count-- > 0) {
+        if (count-- > 0) {
             fill(255, 70);
             rect(BLOCK, BLOCK * 5, BOARD, BLOCK * 8);
             if (count / 30 > 7) {
@@ -130,13 +148,22 @@ public class OmokClient extends PApplet {
                 textAlign(CENTER, CENTER);
                 text("START!", BLOCK + BOARD / 2, BLOCK + BOARD / 2 - 4);
             }
-        }
-        if (count <= 0) outputData();
+        }else if (count <= 0) outputData();
     }
 
     @Override
     public void mousePressed() {
         if (button.isMouseOver(this)) button.onClick();
+
+        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.RUNNING.ordinal() &&
+                checkMouse() && mouseButton == LEFT) {
+            int i = (mouseY - RANGE * 2) / BLOCK - 1;
+            int j = (mouseX - RANGE * 2) / BLOCK - 1;
+            data[Protocol.STONE_I.ordinal()] = (byte) i;
+            data[Protocol.STONE_J.ordinal()] = (byte) j;
+            data[Protocol.STONE_C.ordinal()] = (byte) myColor;
+            outputData();
+        }
     }
 
     @Override
@@ -148,6 +175,28 @@ public class OmokClient extends PApplet {
             else if (id == 1) data[Protocol.READY_1.ordinal()] = 1;
             outputData();
         }
+    }
+
+    private boolean checkMouse() {
+        boolean flag = false;
+
+        for (int i = 0; i < 15; ++i) {
+            for (int j = 0; j < 15; ++j) {
+                if (((BLOCK * 2 - RANGE + (BLOCK * i)) < mouseX) &&
+                        ((BLOCK * 2 + RANGE + (BLOCK * i)) > mouseX) &&
+                        ((BLOCK * 2 - RANGE + (BLOCK * j)) < mouseY) &&
+                        ((BLOCK * 2 + RANGE + (BLOCK * j)) > mouseY)) {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        int i = (mouseY - RANGE * 2) / BLOCK - 1;
+        int j = (mouseX - RANGE * 2) / BLOCK - 1;
+
+
+        return flag && (stones[i][j] == NONE) &&
+                (data[Protocol.TURN.ordinal()] == id);
     }
 
     static void inputData(byte[] b) {
@@ -177,12 +226,13 @@ public class OmokClient extends PApplet {
     private static void whenAllReady() {
         if (id == 0) myColor = data[Protocol.COLOR_0.ordinal()];
         else if (id == 1) myColor = data[Protocol.COLOR_1.ordinal()];
-        countDown = true;
     }
 
     private static void whenRunning() {
-
-
+        int i = data[Protocol.STONE_I.ordinal()];
+        int j = data[Protocol.STONE_J.ordinal()];
+        if (i != -1 && j != -1)
+            stones[i][j] = data[Protocol.STONE_C.ordinal()];
     }
 
     private static void whenEnd() {
@@ -199,6 +249,12 @@ public class OmokClient extends PApplet {
             e.printStackTrace();
         }
         System.out.println(id + " 보냄");
+        try {
+            if (data[Protocol.STONE_I.ordinal()] == -1 &&
+            data[Protocol.GAMESTATUS.ordinal()] == Protocol.RUNNING.ordinal()) throw new NullPointerException();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

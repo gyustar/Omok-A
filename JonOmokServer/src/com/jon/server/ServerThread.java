@@ -17,9 +17,11 @@ public class ServerThread extends Thread {
     private byte[] data = new byte[Protocol.SIZE.ordinal()];
     private int id;
     private Socket socket;
+    private Omok omok;
 
     ServerThread(Socket socket) {
         this.socket = socket;
+        omok = new Omok();
         synchronized (MUTEX) {
             clients.add(this);
             this.id = n++;
@@ -33,6 +35,7 @@ public class ServerThread extends Thread {
                     t.data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.ALL_ENTER.ordinal();
                     t.data[Protocol.STONE_I.ordinal()] = -1; // (0,0)은 가능한 인덱스이기 대문에 (-1, -1)로 초기화
                     t.data[Protocol.STONE_J.ordinal()] = -1;
+                    t.data[Protocol.TURN.ordinal()] = -1;
                 }
             }
         }
@@ -101,6 +104,18 @@ public class ServerThread extends Thread {
                 else data[Protocol.TURN.ordinal()] = (byte) 1;
                 broadcast();
             } else if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.RUNNING.ordinal()) {
+                int i = data[Protocol.STONE_I.ordinal()];
+                int j = data[Protocol.STONE_J.ordinal()];
+                int color = data[Protocol.STONE_C.ordinal()];
+                omok.putStone(i, j, color);
+                if (omok.winCheck()) {
+                    data[Protocol.WINNER.ordinal()] = data[Protocol.TURN.ordinal()];
+                    data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.END.ordinal();
+                } else {
+                    data[Protocol.TURN.ordinal()] = (byte) (data[Protocol.TURN.ordinal()] * -1 + 1);
+                }
+                broadcast();
+            } else if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.END.ordinal()) {
 
             }
         }

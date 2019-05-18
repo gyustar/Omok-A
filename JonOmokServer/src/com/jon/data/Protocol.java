@@ -14,13 +14,14 @@ public enum Protocol {
     COLOR_1, // 10
     STONE_I, // 11
     STONE_J, // 12
-    TURN, // 13
-    WINNER, // 14
-    SIZE, // 15
+    STONE_C, // 13
+    TURN, // 14
+    WINNER, // 15
+    SIZE, // 16
 
-    DEFAULT, // 16
-    ALL_ENTER, // 17
-    ALL_READY, // 18
-    RUNNING, // 19
-    END, // 20
+    DEFAULT, // 17
+    ALL_ENTER, // 18
+    ALL_READY, // 19
+    RUNNING, // 20
+    END, // 21
 }
