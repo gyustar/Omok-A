@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ServerThread extends Thread {
+    private static final int BLACK = 1;
+    private static final int WHITE = -1;
     private static final Object MUTEX = new Object();
     private static List<ServerThread> clients = new ArrayList<>();
     private static int n = 0;
@@ -43,7 +45,6 @@ public class ServerThread extends Thread {
                     os.flush();
                     System.out.println(id + "이" + t.id + "로 보냄");
                 } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         }
@@ -57,12 +58,24 @@ public class ServerThread extends Thread {
             System.out.println(id + "이" + id + "한테 받음");
             System.out.println(Arrays.toString(data));
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
     private void throwDice() {
-        
+        int dice0 = (int) (Math.random() * 6) + 1;
+        int dice1 = (int) (Math.random() * 6) + 1;
+        while (dice0 == dice1) {
+            dice1 = (int) (Math.random() * 6) + 1;
+        }
+        data[Protocol.DICE_0.ordinal()] = (byte) dice0;
+        data[Protocol.DICE_1.ordinal()] = (byte) dice1;
+        if (dice0 > dice1) {
+            data[Protocol.COLOR_0.ordinal()] = BLACK;
+            data[Protocol.COLOR_1.ordinal()] = WHITE;
+        } else {
+            data[Protocol.COLOR_0.ordinal()] = WHITE;
+            data[Protocol.COLOR_1.ordinal()] = BLACK;
+        }
     }
 
     @Override
@@ -80,6 +93,10 @@ public class ServerThread extends Thread {
                     broadcast();
                 }
             } else if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.ALL_READY.ordinal()) {
+                data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.RUNNING.ordinal();
+                data[Protocol.TURN_COLOR.ordinal()] = (byte) BLACK;
+                broadcast();
+            } else if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.RUNNING.ordinal()) {
 
             }
         }

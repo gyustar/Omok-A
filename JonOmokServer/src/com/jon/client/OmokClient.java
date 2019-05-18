@@ -10,6 +10,9 @@ import java.net.Socket;
 import java.util.Arrays;
 
 public class OmokClient extends PApplet {
+    private static final int BLACK = 1;
+    private static final int WHITE = -1;
+    private static final int NONE = 0;
     private static final int BLOCK = 30;
     private static final int GAP = BLOCK / 2;
     private static final int BOARD = BLOCK * 16;
@@ -24,6 +27,9 @@ public class OmokClient extends PApplet {
     private static byte[] data = new byte[Protocol.SIZE.ordinal()];
     private static boolean[] ready = new boolean[2];
     private static Socket socket;
+    private static boolean countDown = false;
+    private static int myColor = NONE;
+    private int count = 330;
 
     @Override
     public void setup() {
@@ -56,7 +62,6 @@ public class OmokClient extends PApplet {
                 ellipse(BLOCK * 6, 3 * BLOCK + BOARD + (BUTTON_H + GAP) * i, 5, 5);
             }
         }
-
         button.draw(this);
         if (button.isMouseOver(this)) cursor(HAND);
         else cursor(ARROW);
@@ -67,6 +72,39 @@ public class OmokClient extends PApplet {
             line(2 * BLOCK, (2 + i) * BLOCK, 16 * BLOCK, (2 + i) * BLOCK);
             line((2 + i) * BLOCK, 2 * BLOCK, (2 + i) * BLOCK, 16 * BLOCK);
         }
+        drawDice();
+    }
+
+    private void drawDice() {
+        if (countDown && count-- > 0) {
+            fill(255, 70);
+            rect(BLOCK, BLOCK * 5, BOARD, BLOCK * 8);
+            if (count / 30 > 7) {
+                fill(0);
+                textSize(50);
+                textAlign(CENTER, CENTER);
+                text(count / 30 - 7, BLOCK + BOARD / 2, BLOCK + BOARD / 2 - 7);
+            } else if (count / 30 > 2) {
+                fill(255);
+                rect(BLOCK * 4, BLOCK * 7, BLOCK * 4, BLOCK * 4, BLOCK / 2);
+                fill(0);
+                textSize(30);
+                textAlign(CENTER, CENTER);
+                if (id == 0)
+                    text(data[Protocol.DICE_0.ordinal()], BLOCK * 6, BLOCK + BOARD / 2 - 4);
+                else if (id == 1)
+                    text(data[Protocol.DICE_1.ordinal()], BLOCK * 6, BLOCK + BOARD / 2 - 4);
+                String s = "";
+                if (myColor == BLACK) s = "BLACK!";
+                else if (myColor == WHITE) s = "WHITE!";
+                text(s, BLOCK * 11, BLOCK + BOARD / 2 - 4);
+            } else {
+                fill(0);
+                textSize(30);
+                textAlign(CENTER, CENTER);
+                text("START!", BLOCK + BOARD / 2, BLOCK + BOARD / 2 - 4);
+            }
+        } else if (count == 0) outputData();
     }
 
     @Override
@@ -110,8 +148,9 @@ public class OmokClient extends PApplet {
     }
 
     private static void whenAllReady() {
-
-
+        if (id == 0) myColor = data[Protocol.COLOR_0.ordinal()];
+        else if (id == 1) myColor = data[Protocol.COLOR_1.ordinal()];
+        countDown = true;
     }
 
     private static void whenRunning() {
