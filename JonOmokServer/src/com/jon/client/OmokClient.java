@@ -1,7 +1,5 @@
 package com.jon.client;
 
-
-import com.sun.org.apache.xml.internal.serializer.OutputPropertyUtils;
 import processing.core.PApplet;
 import com.jon.data.*;
 
@@ -9,8 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 
 public class OmokClient extends PApplet {
     private static final int BLOCK = 30;
@@ -26,7 +23,7 @@ public class OmokClient extends PApplet {
     private static Button button;
     private static byte[] data = new byte[Protocol.SIZE.ordinal()];
     private static boolean[] ready = new boolean[2];
-    private static SocketChannel socketChannel;
+    private static Socket socket;
 
     @Override
     public void setup() {
@@ -85,22 +82,15 @@ public class OmokClient extends PApplet {
             if (id == 0) data[Protocol.READY_0.ordinal()] = 1;
             else if (id == 1) data[Protocol.READY_1.ordinal()] = 1;
             outputData();
-            System.out.println("보냄");
         }
     }
 
     static void inputData(byte[] b) {
         data = b;
         int status = data[Protocol.GAMESTATUS.ordinal()];
+
         if (status == Protocol.DEFAULT.ordinal()) whenDefault();
-        else if (status == Protocol.ALL_ENTER.ordinal()) {
-            System.out.println("올엔터 받음");
-            if (data[Protocol.READY_0.ordinal()] == 1) ready[0] = true;
-            if (data[Protocol.READY_1.ordinal()] == 1) ready[1] = true;
-            if (ready[0]) System.out.println("0레디");
-            if (ready[1]) System.out.println("1레디");
-            whenAllEnter();
-        }
+        else if (status == Protocol.ALL_ENTER.ordinal()) whenAllEnter();
         else if (status == Protocol.ALL_READY.ordinal()) whenAllReady();
         else if (status == Protocol.RUNNING.ordinal()) whenRunning();
         else if (status == Protocol.END.ordinal()) whenEnd();
@@ -114,10 +104,13 @@ public class OmokClient extends PApplet {
     private static void whenAllEnter() {
         if (id == -1) id = 1;
         if (players != 2) players = 2;
+        if (data[Protocol.READY_0.ordinal()] == 1) ready[0] = true;
+        if (data[Protocol.READY_1.ordinal()] == 1) ready[1] = true;
         if (!ready[id]) button.activeButton();
     }
 
     private static void whenAllReady() {
+
 
     }
 
@@ -131,13 +124,14 @@ public class OmokClient extends PApplet {
 
     private static void outputData() {
         try {
-            ByteBuffer buffer = ByteBuffer.allocate(data.length);
-            buffer.put(data);
-            socketChannel.read(buffer);
-//            buffer.flip();
+            OutputStream os = socket.getOutputStream();
+            os.write(data);
+            System.out.println(Arrays.toString(data));
+            os.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println(id + " 보냄");
     }
 
     public static void main(String[] args) {
@@ -149,13 +143,13 @@ public class OmokClient extends PApplet {
                 .build();
 
         try {
-            socketChannel = SocketChannel.open();
-            socketChannel.configureBlocking(true);
-            socketChannel.connect(new InetSocketAddress("192.168.11.27", 5000));
+            socket = new Socket();
+            socket.connect(new InetSocketAddress("192.168.11.27", 5000));
             System.out.println("연결 성공\n");
-            Thread thread = new ClientThread(socketChannel);
+            ClientThread thread = new ClientThread(socket);
             thread.start();
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             e.printStackTrace();
         }
         PApplet.main("com.jon.client.OmokClient");

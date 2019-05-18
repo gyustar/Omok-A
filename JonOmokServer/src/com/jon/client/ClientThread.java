@@ -3,16 +3,14 @@ package com.jon.client;
 import com.jon.data.*;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
+import java.net.Socket;
 
 public class ClientThread extends Thread {
     private byte[] data;
-    private SocketChannel socketChannel;
+    private Socket socket;
 
-    ClientThread(SocketChannel socketChannel) {
-        this.socketChannel = socketChannel;
+    ClientThread(Socket socket) {
+        this.socket = socket;
         data = new byte[Protocol.SIZE.ordinal()];
     }
 
@@ -20,22 +18,12 @@ public class ClientThread extends Thread {
     public void run() {
         while (true) {
             try {
-                if (socketChannel.isConnected()) System.out.println("isConnected");
-                System.out.println("ㄱㄷ");
-                ByteBuffer b = ByteBuffer.allocate(100);
-                socketChannel.read(b);
-                String s = Charset.forName("UTF-8").decode(b).toString();
-                System.out.println(s);
-                ByteBuffer buffer = ByteBuffer.allocate(data.length);
-                socketChannel.read(buffer);
+                InputStream is = socket.getInputStream();
+                int ret = is.read(data);
                 System.out.println("받음");
-                buffer.flip();
-                data = buffer.array();
+                if (ret == -1) throw new IOException();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-            for (int i = 0; i < data.length; ++i) {
-                System.out.println(data[i]);
             }
             OmokClient.inputData(data);
         }
