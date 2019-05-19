@@ -82,8 +82,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/jon/client/OmokClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="261">
-              <caret line="79" column="54" lean-forward="true" selection-start-line="79" selection-start-column="54" selection-end-line="79" selection-end-column="54" />
+            <state relative-caret-position="278">
+              <caret line="253" column="26" lean-forward="true" selection-start-line="253" selection-start-column="26" selection-end-line="253" selection-end-column="26" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -391,8 +391,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/jon/client/OmokClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="79" column="54" lean-forward="true" selection-start-line="79" selection-start-column="54" selection-end-line="79" selection-end-column="54" />
+        <state relative-caret-position="278">
+          <caret line="253" column="26" lean-forward="true" selection-start-line="253" selection-start-column="26" selection-end-line="253" selection-end-column="26" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

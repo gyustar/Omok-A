@@ -30,8 +30,8 @@ public class OmokClient extends PApplet {
     private static Socket socket;
     private static int myColor = NONE;
     private static byte[][] stones = new byte[15][15];
-    private int count = 330;
-    private int countWinBox = 180;
+    private static int count = 330;
+    private static int countWinBox = 180;
 
     @Override
     public void setup() {
@@ -241,9 +241,17 @@ public class OmokClient extends PApplet {
     private static void whenAllEnter() {
         if (id == -1) id = 1;
         if (players != 2) players = 2;
+        gameReset();
         if (data[Protocol.READY_0.ordinal()] == 1) ready[0] = true;
         if (data[Protocol.READY_1.ordinal()] == 1) ready[1] = true;
         if (!ready[id]) button.activeButton();
+    }
+
+    private static void gameReset() {
+        ready = new boolean[2];
+        myColor = NONE;
+        count = 330;
+        countWinBox = 180;
         stones = new byte[15][15];
     }
 
