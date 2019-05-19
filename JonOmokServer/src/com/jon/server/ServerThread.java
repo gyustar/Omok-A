@@ -108,7 +108,7 @@ public class ServerThread extends Thread {
                 int j = data[Protocol.STONE_J.ordinal()];
                 int color = data[Protocol.STONE_C.ordinal()];
                 omok.putStone(i, j, color);
-                if (omok.winCheck()) {
+                if (omok.winCheck(i, j)) {
                     data[Protocol.WINNER.ordinal()] = data[Protocol.TURN.ordinal()];
                     data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.END.ordinal();
                 } else {
@@ -116,7 +116,15 @@ public class ServerThread extends Thread {
                 }
                 broadcast();
             } else if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.END.ordinal()) {
-
+                data = new byte[Protocol.SIZE.ordinal()];
+                data[Protocol.ENTER_0.ordinal()] = 1;
+                data[Protocol.ENTER_1.ordinal()] = 1;
+                data[Protocol.STONE_I.ordinal()] = -1; // (0,0)은 가능한 인덱스이기 대문에 (-1, -1)로 초기화
+                data[Protocol.STONE_J.ordinal()] = -1;
+                data[Protocol.TURN.ordinal()] = -1;
+                data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.ALL_ENTER.ordinal();
+                omok = new Omok();
+                broadcast();
             }
         }
     }

@@ -31,6 +31,7 @@ public class OmokClient extends PApplet {
     private static int myColor = NONE;
     private static byte[][] stones = new byte[15][15];
     private int count = 330;
+    private int countWinBox = 180;
 
     @Override
     public void setup() {
@@ -44,20 +45,41 @@ public class OmokClient extends PApplet {
     @Override
     public void draw() {
         background(255);
+        drawGameBoard();
         drawPlayerList();
         button.draw(this);
+
+        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.ALL_ENTER.ordinal()) {
+            if (button.isMouseOver(this)) cursor(HAND);
+            else cursor(ARROW);
+        }
+
+        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.ALL_READY.ordinal()) {
+            drawDice();
+        }
+
         if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.RUNNING.ordinal()) {
             drawPlayerInfo();
             if (checkMouse()) cursor(HAND);
             else cursor(ARROW);
-        } else {
-            if (button.isMouseOver(this)) cursor(HAND);
-            else cursor(ARROW);
         }
-        drawGameBoard();
-        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.ALL_READY.ordinal()) {
-            drawDice();
+
+        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.END.ordinal()) {
+            drawPlayerInfo();
+            drawWinBox();
         }
+    }
+
+    private void drawWinBox() {
+        if (countWinBox-- > 0) {
+            fill(255, 70);
+            rect(BLOCK, BLOCK * 5, BOARD, BLOCK * 8);
+            fill(0);
+            textSize(50);
+            textAlign(CENTER, CENTER);
+            String s = "Player" + (data[Protocol.WINNER.ordinal()] + 1) + " Win!!";
+            text(s, BLOCK + BOARD / 2, BLOCK + BOARD / 2 - 7);
+        } else if (countWinBox < 0) outputData();
     }
 
     private void drawGameBoard() {
@@ -148,7 +170,7 @@ public class OmokClient extends PApplet {
                 textAlign(CENTER, CENTER);
                 text("START!", BLOCK + BOARD / 2, BLOCK + BOARD / 2 - 4);
             }
-        }else if (count <= 0) outputData();
+        } else if (count <= 0) outputData();
     }
 
     @Override
@@ -213,6 +235,7 @@ public class OmokClient extends PApplet {
     private static void whenDefault() {
         id = 0;
         players = 1;
+        stones = new byte[15][15];
     }
 
     private static void whenAllEnter() {
@@ -221,6 +244,7 @@ public class OmokClient extends PApplet {
         if (data[Protocol.READY_0.ordinal()] == 1) ready[0] = true;
         if (data[Protocol.READY_1.ordinal()] == 1) ready[1] = true;
         if (!ready[id]) button.activeButton();
+        stones = new byte[15][15];
     }
 
     private static void whenAllReady() {
@@ -236,7 +260,9 @@ public class OmokClient extends PApplet {
     }
 
     private static void whenEnd() {
-
+        int i = data[Protocol.STONE_I.ordinal()];
+        int j = data[Protocol.STONE_J.ordinal()];
+        stones[i][j] = data[Protocol.STONE_C.ordinal()];
     }
 
     private static void outputData() {
@@ -251,7 +277,7 @@ public class OmokClient extends PApplet {
         System.out.println(id + " 보냄");
         try {
             if (data[Protocol.STONE_I.ordinal()] == -1 &&
-            data[Protocol.GAMESTATUS.ordinal()] == Protocol.RUNNING.ordinal()) throw new NullPointerException();
+                    data[Protocol.GAMESTATUS.ordinal()] == Protocol.RUNNING.ordinal()) throw new NullPointerException();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -267,7 +293,7 @@ public class OmokClient extends PApplet {
 
         try {
             socket = new Socket();
-            socket.connect(new InetSocketAddress("192.168.11.27", 5000));
+            socket.connect(new InetSocketAddress("172.30.26.248", 5000));
             System.out.println("연결 성공\n");
             ClientThread thread = new ClientThread(socket);
             thread.start();
