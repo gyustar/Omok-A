@@ -4,8 +4,8 @@ import processing.core.PApplet;
 
 class Button {
     private String label;
-    private int color = 255;
-    private boolean activation = false;
+    private int color;
+    private boolean activation;
     private int x;
     private int y;
     private int w;
@@ -13,6 +13,8 @@ class Button {
 
     private Button(Builder builder) {
         this.label = builder.label;
+        this.color = builder.color;
+        this.activation = builder.activation;
         this.x = builder.x;
         this.y = builder.y;
         this.w = builder.w;
@@ -21,6 +23,8 @@ class Button {
 
     static class Builder {
         private String label;
+        private int color;
+        private boolean activation;
         private int x = 0;
         private int y = 0;
         private int w = 0;
@@ -28,6 +32,8 @@ class Button {
 
         Builder(String label) {
             this.label = label;
+            this.color = 255;
+            this.activation = false;
         }
 
         Builder positionX(int x) {

@@ -2,6 +2,7 @@ package com.jon.client;
 
 import processing.core.PApplet;
 import com.jon.data.*;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -30,10 +31,6 @@ public class OmokClient extends PApplet {
     private static byte[][] stones = new byte[15][15];
     private static int count = 330;
     private static int countWinBox = 180;
-
-    @Override
-    public void setup() {
-    }
 
     @Override
     public void settings() {
@@ -239,14 +236,6 @@ public class OmokClient extends PApplet {
         if (!ready[id]) button.activeButton();
     }
 
-    private static void gameReset() {
-        ready = new boolean[2];
-        myColor = NONE;
-        count = 330;
-        countWinBox = 180;
-        stones = new byte[15][15];
-    }
-
     private static void whenAllReady() {
         if (id == 0) myColor = data[Protocol.COLOR_0.ordinal()];
         else if (id == 1) myColor = data[Protocol.COLOR_1.ordinal()];
@@ -263,6 +252,14 @@ public class OmokClient extends PApplet {
         int i = data[Protocol.STONE_I.ordinal()];
         int j = data[Protocol.STONE_J.ordinal()];
         stones[i][j] = data[Protocol.STONE_C.ordinal()];
+    }
+
+    private static void gameReset() {
+        ready = new boolean[2];
+        myColor = NONE;
+        count = 330;
+        countWinBox = 180;
+        stones = new byte[15][15];
     }
 
     private static void outputData() {

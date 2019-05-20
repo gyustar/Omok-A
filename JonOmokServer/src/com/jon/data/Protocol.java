@@ -6,22 +6,20 @@ public enum Protocol {
     ENTER_1, // 2
     READY_0, // 3
     READY_1, // 4
-    RESTART_0, // 5
-    RESTART_1, // 6
-    DICE_0, // 7
-    DICE_1, // 8
-    COLOR_0, // 9
-    COLOR_1, // 10
-    STONE_I, // 11
-    STONE_J, // 12
-    STONE_C, // 13
-    TURN, // 14
-    WINNER, // 15
-    SIZE, // 16
+    DICE_0, // 5
+    DICE_1, // 6
+    COLOR_0, // 7
+    COLOR_1, // 8
+    STONE_I, // 9
+    STONE_J, // 10
+    STONE_C, // 11
+    TURN, // 12
+    WINNER, // 13
+    SIZE, // 14
 
-    DEFAULT, // 17
-    ALL_ENTER, // 18
-    ALL_READY, // 19
-    RUNNING, // 20
-    END, // 21
+    DEFAULT, // 15
+    ALL_ENTER, // 16
+    ALL_READY, // 17
+    RUNNING, // 18
+    END, // 19
 }

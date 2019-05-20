@@ -45,7 +45,7 @@ public class ServerThread extends Thread {
         data = new byte[Protocol.SIZE.ordinal()];
         data[Protocol.ENTER_0.ordinal()] = 1;
         data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.DEFAULT.ordinal();
-        n++;
+        n--;
     }
 
     private void broadcast() {
@@ -90,7 +90,6 @@ public class ServerThread extends Thread {
                 if (ret == -1) throw new IOException();
             } catch (IOException e) {
                 synchronized (MUTEX) {
-                    n = 0;
                     this.reset();
                     clients.remove(this);
                     broadcast();
