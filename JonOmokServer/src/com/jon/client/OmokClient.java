@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class OmokClient extends PApplet {
     private static final int BLACK = 1;
@@ -49,22 +48,18 @@ public class OmokClient extends PApplet {
         drawPlayerList();
         button.draw(this);
 
-        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.ALL_ENTER.ordinal()) {
+        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.DEFAULT.ordinal()) {
+            cursor(ARROW);
+        } else if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.ALL_ENTER.ordinal()) {
             if (button.isMouseOver(this)) cursor(HAND);
             else cursor(ARROW);
-        }
-
-        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.ALL_READY.ordinal()) {
+        } else if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.ALL_READY.ordinal()) {
             drawDice();
-        }
-
-        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.RUNNING.ordinal()) {
+        } else if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.RUNNING.ordinal()) {
             drawPlayerInfo();
             if (checkMouse()) cursor(HAND);
             else cursor(ARROW);
-        }
-
-        if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.END.ordinal()) {
+        } else if (data[Protocol.GAMESTATUS.ordinal()] == Protocol.END.ordinal()) {
             drawPlayerInfo();
             drawWinBox();
         }
@@ -216,7 +211,6 @@ public class OmokClient extends PApplet {
         int i = (mouseY - RANGE * 2) / BLOCK - 1;
         int j = (mouseX - RANGE * 2) / BLOCK - 1;
 
-
         return flag && (stones[i][j] == NONE) &&
                 (data[Protocol.TURN.ordinal()] == id);
     }
@@ -224,7 +218,6 @@ public class OmokClient extends PApplet {
     static void inputData(byte[] b) {
         data = b;
         int status = data[Protocol.GAMESTATUS.ordinal()];
-
         if (status == Protocol.DEFAULT.ordinal()) whenDefault();
         else if (status == Protocol.ALL_ENTER.ordinal()) whenAllEnter();
         else if (status == Protocol.ALL_READY.ordinal()) whenAllReady();
@@ -235,7 +228,7 @@ public class OmokClient extends PApplet {
     private static void whenDefault() {
         id = 0;
         players = 1;
-        stones = new byte[15][15];
+        gameReset();
     }
 
     private static void whenAllEnter() {
@@ -277,16 +270,8 @@ public class OmokClient extends PApplet {
         try {
             OutputStream os = socket.getOutputStream();
             os.write(data);
-            System.out.println(Arrays.toString(data));
             os.flush();
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(id + " 보냄");
-        try {
-            if (data[Protocol.STONE_I.ordinal()] == -1 &&
-                    data[Protocol.GAMESTATUS.ordinal()] == Protocol.RUNNING.ordinal()) throw new NullPointerException();
-        } catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -301,7 +286,7 @@ public class OmokClient extends PApplet {
 
         try {
             socket = new Socket();
-            socket.connect(new InetSocketAddress("172.30.26.248", 5000));
+            socket.connect(new InetSocketAddress("192.168.11.27", 5000));
             System.out.println("연결 성공\n");
             ClientThread thread = new ClientThread(socket);
             thread.start();

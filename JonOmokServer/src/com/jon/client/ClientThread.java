@@ -20,10 +20,10 @@ public class ClientThread extends Thread {
             try {
                 InputStream is = socket.getInputStream();
                 int ret = is.read(data);
-                System.out.println("받음");
                 if (ret == -1) throw new IOException();
             } catch (IOException e) {
                 e.printStackTrace();
+                break;
             }
             OmokClient.inputData(data);
         }

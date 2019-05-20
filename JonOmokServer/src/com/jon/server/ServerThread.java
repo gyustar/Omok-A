@@ -5,7 +5,6 @@ import com.jon.data.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ServerThread extends Thread {
@@ -14,22 +13,22 @@ public class ServerThread extends Thread {
     private static final Object MUTEX = new Object();
     private static List<ServerThread> clients = new ArrayList<>();
     private static int n = 0;
-    private byte[] data = new byte[Protocol.SIZE.ordinal()];
-    private int id;
+    private byte[] data;
     private Socket socket;
     private Omok omok;
 
     ServerThread(Socket socket) {
         this.socket = socket;
         omok = new Omok();
+        data = new byte[Protocol.SIZE.ordinal()];
         synchronized (MUTEX) {
             clients.add(this);
-            this.id = n++;
+            int id = n++;
             for (ServerThread t : clients) {
-                if (this.id == 0) {
+                if (id == 0) {
                     t.data[Protocol.ENTER_0.ordinal()] = 1;
                     t.data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.DEFAULT.ordinal();
-                } else if (this.id == 1) {
+                } else if (id == 1) {
                     t.data[Protocol.ENTER_0.ordinal()] = 1;
                     t.data[Protocol.ENTER_1.ordinal()] = 1;
                     t.data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.ALL_ENTER.ordinal();
@@ -41,6 +40,14 @@ public class ServerThread extends Thread {
         }
     }
 
+    private void reset() {
+        omok = new Omok();
+        data = new byte[Protocol.SIZE.ordinal()];
+        data[Protocol.ENTER_0.ordinal()] = 1;
+        data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.DEFAULT.ordinal();
+        if (this.socket.isConnected()) n++;
+    }
+
     private void broadcast() {
         synchronized (MUTEX) {
             for (ServerThread t : clients) {
@@ -48,21 +55,11 @@ public class ServerThread extends Thread {
                     OutputStream os = t.socket.getOutputStream();
                     os.write(data);
                     os.flush();
-                    System.out.println(id + "이" + t.id + "로 보냄");
                 } catch (IOException e) {
+                    n = 0;
+                    clients.remove(t);
                 }
             }
-        }
-    }
-
-    private void inputData() {
-        try {
-            InputStream is = this.socket.getInputStream();
-            int ret = is.read(data);
-            if (ret == -1) throw new IOException();
-            System.out.println(id + "이" + id + "한테 받음");
-            System.out.println(Arrays.toString(data));
-        } catch (IOException e) {
         }
     }
 
@@ -86,8 +83,22 @@ public class ServerThread extends Thread {
     @Override
     public void run() {
         broadcast();
-        while (true) {
-            inputData();
+        while (this.socket.isConnected()) {
+            try {
+                InputStream is = this.socket.getInputStream();
+                int ret = is.read(data);
+                if (ret == -1) throw new IOException();
+            } catch (IOException e) {
+                synchronized (MUTEX) {
+                    n = 0;
+                    clients.remove(this);
+                }
+            }
+
+            synchronized (MUTEX) {
+                if (n == 0) this.reset();
+            }
+
             if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.DEFAULT.ordinal()) {
                 broadcast();
             } else if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.ALL_ENTER.ordinal()) {

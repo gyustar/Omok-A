@@ -11,7 +11,7 @@ class Button {
     private int w;
     private int h;
 
-    Button(Builder builder) {
+    private Button(Builder builder) {
         this.label = builder.label;
         this.x = builder.x;
         this.y = builder.y;
@@ -85,10 +85,5 @@ class Button {
 
     void unactiveButton() {
         this.activation = false;
-    }
-
-    void changeLabel() {
-        if (label.equals("READY")) label = "RESTART";
-        else if (label.equals("RESTART")) label = "READY";
     }
 }
