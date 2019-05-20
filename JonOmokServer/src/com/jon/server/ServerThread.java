@@ -45,7 +45,7 @@ public class ServerThread extends Thread {
         data = new byte[Protocol.SIZE.ordinal()];
         data[Protocol.ENTER_0.ordinal()] = 1;
         data[Protocol.GAMESTATUS.ordinal()] = (byte) Protocol.DEFAULT.ordinal();
-        if (this.socket.isConnected()) n++;
+        n++;
     }
 
     private void broadcast() {
@@ -83,7 +83,7 @@ public class ServerThread extends Thread {
     @Override
     public void run() {
         broadcast();
-        while (this.socket.isConnected()) {
+        while (this.socket.isConnected() && !this.socket.isClosed()) {
             try {
                 InputStream is = this.socket.getInputStream();
                 int ret = is.read(data);
@@ -91,12 +91,11 @@ public class ServerThread extends Thread {
             } catch (IOException e) {
                 synchronized (MUTEX) {
                     n = 0;
+                    this.reset();
                     clients.remove(this);
+                    broadcast();
+                    break;
                 }
-            }
-
-            synchronized (MUTEX) {
-                if (n == 0) this.reset();
             }
 
             if (data[Protocol.GAMESTATUS.ordinal()] == (byte) Protocol.DEFAULT.ordinal()) {
