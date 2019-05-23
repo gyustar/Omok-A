@@ -9,11 +9,19 @@ class ClientThread extends Thread implements Protocol {
     private static final int NONE = 0;
     private byte[] data;
     private Socket socket;
+    private InputStream is;
+    private OutputStream os;
     private Window window;
     private int id;
 
     ClientThread(Socket socket, Window window) {
         this.socket = socket;
+        try {
+            is = socket.getInputStream();
+            os = socket.getOutputStream();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
         this.window = window;
         data = new byte[SIZE];
     }
@@ -30,17 +38,25 @@ class ClientThread extends Thread implements Protocol {
         sendData();
     }
 
+    void canStart() {
+        sendData();
+    }
+
     @Override
     public void run() {
         while (true) {
             try {
-                InputStream is = socket.getInputStream();
                 int ret = is.read(data);
                 if (ret == -1) throw new IOException();
             } catch (IOException e) {
-                e.printStackTrace();
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 break;
             }
+            System.out.println("receive");
 
             int gameStatus = data[GAMESTATUS];
             window.setGameStatus(gameStatus);
@@ -53,13 +69,16 @@ class ClientThread extends Thread implements Protocol {
         }
     }
 
-    void sendData() {
+    private void sendData() {
         try {
-            OutputStream os = socket.getOutputStream();
             os.write(data);
             os.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                is.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
         System.out.println("send");
     }

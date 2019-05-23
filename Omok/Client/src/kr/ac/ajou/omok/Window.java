@@ -54,8 +54,8 @@ public class Window extends PApplet implements GUI, Protocol {
         for (Box b : boxes) {
             b.display(this);
             if (b.isEnd()) {
+                thread.canStart();
                 boxes.remove(b);
-                thread.sendData();
             }
         }
         for (PlayerInfo p : players) p.display(this);

@@ -18,10 +18,18 @@ class ServerThread extends Thread implements Protocol {
 
     private byte[] data;
     private Socket socket;
+    private InputStream is;
+    private OutputStream os;
     private Omok omok;
 
     ServerThread(Socket socket) {
         this.socket = socket;
+        try {
+            is = socket.getInputStream();
+            os = socket.getOutputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         omok = new Omok();
         data = new byte[SIZE];
         synchronized (MUTEX) {
@@ -48,12 +56,16 @@ class ServerThread extends Thread implements Protocol {
         synchronized (MUTEX) {
             for (ServerThread t : clients) {
                 try {
-                    OutputStream os = t.socket.getOutputStream();
-                    os.write(data);
-                    os.flush();
+                    t.os.write(data);
+                    t.os.flush();
                 } catch (IOException e) {
                     n = 0;
                     clients.remove(t);
+                    try {
+                        t.os.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
         }
@@ -81,10 +93,14 @@ class ServerThread extends Thread implements Protocol {
         broadcast();
         while (this.socket.isConnected() && !this.socket.isClosed()) {
             try {
-                InputStream is = this.socket.getInputStream();
                 int ret = is.read(data);
                 if (ret == -1) throw new IOException();
             } catch (IOException e) {
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 synchronized (MUTEX) {
                     this.reset();
                     clients.remove(this);
@@ -116,7 +132,7 @@ class ServerThread extends Thread implements Protocol {
                     }
 
                     try {
-                        sleep(20);
+                        sleep(50);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
