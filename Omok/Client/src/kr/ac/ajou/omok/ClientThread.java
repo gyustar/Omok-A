@@ -120,7 +120,8 @@ class ClientThread extends Thread implements Protocol {
         sendData();
     }
 
-    void canStart() {
+    void canRun() {
+        data[READY_TO_RUN_0 + id] = 1;
         sendData();
     }
 

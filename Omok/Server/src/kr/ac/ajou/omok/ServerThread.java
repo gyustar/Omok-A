@@ -122,20 +122,15 @@ class ServerThread extends Thread implements Protocol {
                     }
                     break;
                 case ALL_READY:
-                    data[GAMESTATUS] = RUNNING;
-                    if (data[COLOR_0] == BLACK) {
-                        data[TURN] = 0;
-                    } else if (data[COLOR_1] == BLACK) {
-                        data[TURN] = 1;
+                    if (data[READY_TO_RUN_0] == 1 && data[READY_TO_RUN_1] == 1) {
+                        data[GAMESTATUS] = RUNNING;
+                        if (data[COLOR_0] == BLACK) {
+                            data[TURN] = 0;
+                        } else if (data[COLOR_1] == BLACK) {
+                            data[TURN] = 1;
+                        }
+                        broadcast();
                     }
-
-                    try {
-                        sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    broadcast();
                     break;
                 case RUNNING:
                     int i = data[STONE_I];

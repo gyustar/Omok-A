@@ -22,16 +22,16 @@ public class Window extends PApplet implements GUI, Protocol {
     @Override
     public void setup() {
         connect();
+    }
+
+    @Override
+    public void settings() {
         board = Board.getInstance();
         button = Button.getInstance();
         players = new CopyOnWriteArrayList<>();
         stones = new CopyOnWriteArrayList<>();
         boxes = new CopyOnWriteArrayList<>();
         myTurn = false;
-    }
-
-    @Override
-    public void settings() {
         size(WINDOW_W, WINDOW_H);
     }
 
@@ -44,7 +44,7 @@ public class Window extends PApplet implements GUI, Protocol {
         for (Box b : boxes) {
             b.display(this);
             if (b.isEnd()) {
-                thread.canStart();
+                thread.canRun();
                 boxes.remove(b);
             }
         }
