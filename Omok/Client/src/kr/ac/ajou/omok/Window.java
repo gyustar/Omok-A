@@ -21,22 +21,7 @@ public class Window extends PApplet implements GUI, Protocol {
 
     @Override
     public void setup() {
-        Socket socket;
-        try {
-            socket = new Socket();
-            socket.connect(new InetSocketAddress("192.168.11.27", 5000));
-            System.out.println("연결 성공\n");
-            thread = new ClientThread(socket, this);
-            thread.start();
-        } catch (
-                IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void settings() {
-        size(WINDOW_W, WINDOW_H);
+        connect();
         board = Board.getInstance();
         button = Button.getInstance();
         players = new CopyOnWriteArrayList<>();
@@ -46,8 +31,13 @@ public class Window extends PApplet implements GUI, Protocol {
     }
 
     @Override
+    public void settings() {
+        size(WINDOW_W, WINDOW_H);
+    }
+
+    @Override
     public void draw() {
-        background(255);
+        background(WHITE_COLOR);
         board.display(this);
         button.display(this);
 
@@ -183,6 +173,20 @@ public class Window extends PApplet implements GUI, Protocol {
     void resetGame() {
         players = new CopyOnWriteArrayList<>();
         stones = new CopyOnWriteArrayList<>();
+    }
+
+    private void connect() {
+        Socket socket;
+        try {
+            socket = new Socket();
+            socket.connect(new InetSocketAddress("192.168.11.27", 5000));
+            System.out.println("연결 성공\n");
+            thread = new ClientThread(socket, this);
+            thread.start();
+        } catch (
+                IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

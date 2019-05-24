@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-
 class ServerThread extends Thread implements Protocol {
     private static final int BLACK = 1;
     private static final int WHITE = -1;
@@ -126,8 +125,7 @@ class ServerThread extends Thread implements Protocol {
                     data[GAMESTATUS] = RUNNING;
                     if (data[COLOR_0] == BLACK) {
                         data[TURN] = 0;
-                    }
-                    else if (data[COLOR_1] == BLACK) {
+                    } else if (data[COLOR_1] == BLACK) {
                         data[TURN] = 1;
                     }
 

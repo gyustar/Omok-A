@@ -20,6 +20,7 @@ interface GUI {
     int TEXT_SIZE_BIG = 30;
     int DICEBOX = 50;
     int WINBOX = 51;
+    int WHITE_COLOR = 255;
 
     default void fillBlack(PApplet p) {
         p.fill(0);

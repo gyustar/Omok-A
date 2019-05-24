@@ -8,38 +8,20 @@ import java.net.Socket;
 class ClientThread extends Thread implements Protocol {
     private static final int NONE = 0;
     private byte[] data;
-    private Socket socket;
     private InputStream is;
     private OutputStream os;
     private Window window;
     private int id;
 
     ClientThread(Socket socket, Window window) {
-        this.socket = socket;
         try {
             is = socket.getInputStream();
             os = socket.getOutputStream();
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         this.window = window;
         data = new byte[SIZE];
-    }
-
-    void putStone(int i, int j) {
-        data[STONE_I] = (byte) i;
-        data[STONE_J] = (byte) j;
-        data[STONE_C] = data[COLOR_0 + data[TURN]];
-        sendData();
-    }
-
-    void amReady() {
-        data[READY_0 + id] = 1;
-        sendData();
-    }
-
-    void canStart() {
-        sendData();
     }
 
     @Override
@@ -83,13 +65,6 @@ class ClientThread extends Thread implements Protocol {
         System.out.println("send");
     }
 
-    private void whenDefault() {
-        if (window.howManyPlayer() != 0)
-            window.resetGame();
-        id = 0;
-        window.addPlayer(new PlayerInfo(0, true), id);
-    }
-
     private void whenAllEnter() {
         if (window.howManyPlayer() == 0) {
             id = 1;
@@ -131,5 +106,28 @@ class ClientThread extends Thread implements Protocol {
         int color = data[STONE_C];
         window.addStone(new Stone(i, j, color));
         window.makeBox(new Box(data[WINNER]));
+    }
+
+    void putStone(int i, int j) {
+        data[STONE_I] = (byte) i;
+        data[STONE_J] = (byte) j;
+        data[STONE_C] = data[COLOR_0 + data[TURN]];
+        sendData();
+    }
+
+    void amReady() {
+        data[READY_0 + id] = 1;
+        sendData();
+    }
+
+    void canStart() {
+        sendData();
+    }
+
+    private void whenDefault() {
+        if (window.howManyPlayer() != 0)
+            window.resetGame();
+        id = 0;
+        window.addPlayer(new PlayerInfo(0, true), id);
     }
 }
