@@ -1,9 +1,7 @@
-package com.jon.server;
-
-class Omok {
+class OmokCheck {
     private byte[][] stones;
 
-    Omok() {
+    OmokCheck() {
         stones = new byte[15][15];
     }
 
