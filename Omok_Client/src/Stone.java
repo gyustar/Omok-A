@@ -1,17 +1,20 @@
 import processing.core.PApplet;
 
 class Stone implements Settings {
+
     private final int i;
     private final int j;
     private final int color;
 
     Stone(int i, int j, int color) {
+
         this.i = i;
         this.j = j;
         this.color = color;
     }
 
     void render(PApplet p) {
+
         if (color == BLACK) BlackColor(p);
         if (color == WHITE) WhiteColor(p);
 

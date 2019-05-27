@@ -1,6 +1,7 @@
 import processing.core.PApplet;
 
 interface Settings {
+
     int BLACK = 1;
     int WHITE = -1;
     int NONE = 0;

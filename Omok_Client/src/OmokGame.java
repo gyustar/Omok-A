@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OmokGame extends PApplet implements Settings, Protocol {
+
     private Board board;
     private Button button;
     private List<Player> players;
@@ -25,7 +26,6 @@ public class OmokGame extends PApplet implements Settings, Protocol {
         try {
             socket = new Socket();
             socket.connect(new InetSocketAddress("192.168.11.145", 5000));
-            System.out.println("연결 성공\n");
             thread = new ClientThread(socket, this);
             thread.start();
         } catch (
@@ -36,10 +36,11 @@ public class OmokGame extends PApplet implements Settings, Protocol {
 
     @Override
     public void settings() {
+
         size(WINDOW_W, WINDOW_H);
         board = Board.getInstance();
-        button = Button.getInstance();
         players = new CopyOnWriteArrayList<>();
+        button = Button.getInstance();
         stones = new CopyOnWriteArrayList<>();
         boxes = new CopyOnWriteArrayList<>();
         myTurn = false;
@@ -47,7 +48,7 @@ public class OmokGame extends PApplet implements Settings, Protocol {
 
     @Override
     public void draw() {
-        background(255);
+
         board.render(this);
         button.render(this);
 
@@ -62,11 +63,11 @@ public class OmokGame extends PApplet implements Settings, Protocol {
 
         for (Player p : players) p.render(this);
         for (Stone s : stones) s.render(this);
-
         mouseEvent();
     }
 
     private void mouseEvent() {
+
         switch (gameState) {
             case DEFAULT:
                 cursor(ARROW);
@@ -84,6 +85,7 @@ public class OmokGame extends PApplet implements Settings, Protocol {
 
     @Override
     public void mousePressed() {
+
         if (button.isMouseOver(this))
             button.click();
 
@@ -98,6 +100,7 @@ public class OmokGame extends PApplet implements Settings, Protocol {
 
     @Override
     public void mouseReleased() {
+
         if (button.isMouseOver(this)) {
             button.release();
             button.unactive();
@@ -106,6 +109,7 @@ public class OmokGame extends PApplet implements Settings, Protocol {
     }
 
     private boolean checkMouse() {
+
         int i = convertToIndex(mouseY);
         int j = convertToIndex(mouseX);
 
@@ -113,10 +117,12 @@ public class OmokGame extends PApplet implements Settings, Protocol {
     }
 
     private int convertToIndex(int mouse) {
+
         return (mouse - RANGE * 2) / BLOCK - 1;
     }
 
     private boolean checkRange() {
+
         for (int i = 0; i < Settings.LINE; ++i) {
             for (int j = 0; j < Settings.LINE; ++j) {
                 if (((BLOCK * 2 - RANGE + (BLOCK * i)) < mouseX) &&
@@ -131,6 +137,7 @@ public class OmokGame extends PApplet implements Settings, Protocol {
     }
 
     private boolean emptySpace(int i, int j) {
+
         for (Stone s : stones) {
             if (s.checkStone(i, j)) return false;
         }
@@ -138,23 +145,28 @@ public class OmokGame extends PApplet implements Settings, Protocol {
     }
 
     void setGameState(int gameState) {
+
         this.gameState = gameState;
     }
 
     void addPlayer(Player p, int id) {
+
         players.add(p);
         if (p.isMe()) this.id = id;
     }
 
     int allPlayer() {
+
         return players.size();
     }
 
     void readyPlayer(int id) {
+
         players.get(id).isReady();
     }
 
     void setPlayerColor(int color0, int color1) {
+
         for (Player p : players) {
 
             if (p.hasInfo()) break;
@@ -168,6 +180,7 @@ public class OmokGame extends PApplet implements Settings, Protocol {
     }
 
     void changeTurn(int turn) {
+
         myTurn = (this.id == turn);
         for (Player p : players) {
             p.changeTurn(turn);
@@ -187,6 +200,7 @@ public class OmokGame extends PApplet implements Settings, Protocol {
     }
 
     void resetGame() {
+
         players = new CopyOnWriteArrayList<>();
         stones = new CopyOnWriteArrayList<>();
     }

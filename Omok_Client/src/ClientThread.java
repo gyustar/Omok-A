@@ -12,12 +12,14 @@ class ClientThread extends Thread implements Protocol {
     private int id;
 
     ClientThread(Socket socket, OmokGame omokgame) {
+
         try {
             is = socket.getInputStream();
             os = socket.getOutputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         this.omokgame = omokgame;
         data = new byte[SIZE];
     }
@@ -111,7 +113,6 @@ class ClientThread extends Thread implements Protocol {
 
     private void whenRunning() {
         omokgame.setPlayerColor(data[COLOR_0], data[COLOR_1]);
-        System.out.println(data[TURN]);
         omokgame.changeTurn(data[TURN]);
 
         int i = data[STONE_I];
