@@ -6,13 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ServerThread extends Thread implements Protocol {
+
     private static final int BLACK = 1;
     private static final int WHITE = -1;
     private static final Object MUTEX = new Object();
-
-    private static List<ServerThread> clients = new ArrayList<>();
-    private static int n = 0;
-
+    private static List<ServerThread> players = new ArrayList<>();
+    private static int player = 0;
     private byte[] data;
     private Socket socket;
     private InputStream is;
@@ -30,13 +29,13 @@ class ServerThread extends Thread implements Protocol {
         omok = new OmokCheck();
         data = new byte[SIZE];
         synchronized (MUTEX) {
-            clients.add(this);
-            int id = n++;
-            for (ServerThread t : clients) {
+            players.add(this);
+            int id = player++;
+            for (ServerThread t : players) {
                 if (id == 0) {
-                    t.data[GAMESTATUS] = DEFAULT;
+                    t.data[GAMESTATE] = DEFAULT;
                 } else if (id == 1) {
-                    t.data[GAMESTATUS] = ALL_ENTER;
+                    t.data[GAMESTATE] = ALL_ENTER;
                 }
             }
         }
@@ -45,19 +44,19 @@ class ServerThread extends Thread implements Protocol {
     private void reset() {
         omok = new OmokCheck();
         data = new byte[SIZE];
-        data[GAMESTATUS] = DEFAULT;
-        n--;
+        data[GAMESTATE] = DEFAULT;
+        player--;
     }
 
     private void broadcast() {
         synchronized (MUTEX) {
-            for (ServerThread t : clients) {
+            for (ServerThread t : players) {
                 try {
                     t.os.write(data);
                     t.os.flush();
                 } catch (IOException e) {
-                    n = 0;
-                    clients.remove(t);
+                    player = 0;
+                    players.remove(t);
                     try {
                         t.os.close();
                     } catch (IOException ex) {
@@ -69,13 +68,17 @@ class ServerThread extends Thread implements Protocol {
     }
 
     private void throwDice() {
+
         int dice0 = (int) (Math.random() * 6) + 1;
         int dice1 = (int) (Math.random() * 6) + 1;
+
         while (dice0 == dice1) {
+            dice0 = (int) (Math.random() * 6) + 1;
             dice1 = (int) (Math.random() * 6) + 1;
         }
         data[DICE_0] = (byte) dice0;
         data[DICE_1] = (byte) dice1;
+
         if (dice0 > dice1) {
             data[COLOR_0] = BLACK;
             data[COLOR_1] = WHITE;
@@ -87,7 +90,9 @@ class ServerThread extends Thread implements Protocol {
 
     @Override
     public void run() {
+
         broadcast();
+
         while (this.socket.isConnected() && !this.socket.isClosed()) {
             try {
                 int ret = is.read(data);
@@ -100,27 +105,31 @@ class ServerThread extends Thread implements Protocol {
                 }
                 synchronized (MUTEX) {
                     this.reset();
-                    clients.remove(this);
+                    players.remove(this);
                     broadcast();
                     break;
                 }
             }
-            byte gameStatus = data[GAMESTATUS];
+
+            byte gameStatus = data[GAMESTATE];
 
             switch (gameStatus) {
+
                 case DEFAULT:
                     broadcast();
                     break;
+
                 case ALL_ENTER:
                     broadcast();
                     if (data[READY_0] == 1 && data[READY_1] == 1) {
-                        data[GAMESTATUS] = ALL_READY;
+                        data[GAMESTATE] = ALL_READY;
                         throwDice();
                         broadcast();
                     }
                     break;
+
                 case ALL_READY:
-                    data[GAMESTATUS] = RUNNING;
+                    data[GAMESTATE] = RUNNING;
                     if (data[COLOR_0] == BLACK) {
                         data[TURN] = 0;
                     } else if (data[COLOR_1] == BLACK) {
@@ -135,6 +144,7 @@ class ServerThread extends Thread implements Protocol {
 
                     broadcast();
                     break;
+
                 case RUNNING:
                     int i = data[STONE_I];
                     int j = data[STONE_J];
@@ -143,20 +153,20 @@ class ServerThread extends Thread implements Protocol {
 
                     if (omok.winCheck(i, j)) {
                         data[WINNER] = data[TURN];
-                        data[GAMESTATUS] = END;
+                        data[GAMESTATE] = END;
                     } else {
                         data[TURN] = (byte) (data[TURN] * -1 + 1);
                     }
                     broadcast();
                     break;
+
                 case END:
                     data = new byte[SIZE];
                     data[STONE_I] = -1;
                     data[STONE_J] = -1;
                     data[TURN] = -1;
-                    data[GAMESTATUS] = ALL_ENTER;
+                    data[GAMESTATE] = ALL_ENTER;
                     omok = new OmokCheck();
-
                     broadcast();
                     break;
             }

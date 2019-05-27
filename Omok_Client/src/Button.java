@@ -1,47 +1,48 @@
 import processing.core.PApplet;
 
-class Button implements GUI {
+class Button implements Settings {
+
     private final int x;
     private final int y;
     private final int w;
     private final int h;
 
-    private final int InnerX;
-    private final int InnerY;
-    private final int InnerW;
-    private final int InnerH;
+    private final int InsideX;
+    private final int InsideY;
+    private final int InsideW;
+    private final int InsideH;
 
     private boolean activation;
     private boolean onClick;
 
     private Button() {
+
         x = BLOCK;
         y = WINDOW_H - BLOCK - BUTTON_H;
         w = BUTTON_W;
         h = BUTTON_H;
 
-        InnerX = x + 10;
-        InnerY = y + 10;
-        InnerW = w - 20;
-        InnerH = h - 20;
+        InsideX = x + 10;
+        InsideY = y + 10;
+        InsideW = w - 20;
+        InsideH = h - 20;
 
         activation = false;
         onClick = false;
     }
 
-    @Override
-    public void display(PApplet p) {
+    void render(PApplet p) {
 
         GreyColor(p);
         p.rect(x, y, w, h);
 
         if (!onClick) WhiteColor(p);
-        p.rect(InnerX, InnerY, InnerW, InnerH);
+        p.rect(InsideX, InsideY, InsideW, InsideH);
 
         BlackColor(p);
         p.textSize(TEXT_SIZE);
         p.textAlign(p.CENTER, p.CENTER);
-        p.text("READY", InnerX + InnerW / 2f, InnerY + InnerH / 2f - 3);
+        p.text("READY", InsideX + InsideW / 2f, InsideY + InsideH / 2f - 3);
     }
 
     void click() {
@@ -53,16 +54,19 @@ class Button implements GUI {
     }
 
     void active() {
-        this.activation = true;
+        activation = true;
     }
 
     void unactive() {
-        this.activation = false;
+        activation = false;
     }
 
     boolean isMouseOver(PApplet p) {
-        return p.mouseX > InnerX && p.mouseX < InnerX + InnerW &&
-                p.mouseY > InnerY && p.mouseY < InnerY + InnerH && this.activation;
+        return p.mouseX > InsideX &&
+                p.mouseX < InsideX + InsideW &&
+                p.mouseY > InsideY &&
+                p.mouseY < InsideY + InsideH &&
+                activation;
     }
 
     static Button getInstance() {

@@ -6,20 +6,22 @@ import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Omok extends PApplet implements GUI, Protocol {
+public class OmokGame extends PApplet implements Settings, Protocol {
     private Board board;
     private Button button;
     private List<Player> players;
     private List<Stone> stones;
-    private List<WinBox> boxes;
+    private List<Box> boxes;
     private ClientThread thread;
-    private int gameStatus;
+    private int gameState;
     private int id;
     private boolean myTurn;
 
     @Override
     public void setup() {
+
         Socket socket;
+
         try {
             socket = new Socket();
             socket.connect(new InetSocketAddress("192.168.11.145", 5000));
@@ -46,24 +48,26 @@ public class Omok extends PApplet implements GUI, Protocol {
     @Override
     public void draw() {
         background(255);
-        board.display(this);
-        button.display(this);
+        board.render(this);
+        button.render(this);
 
-        for (WinBox b : boxes) {
-            b.display(this);
+        for (Box b : boxes) {
+            b.render(this);
+
             if (b.isEnd()) {
                 thread.canStart();
                 boxes.remove(b);
             }
         }
-        for (Player p : players) p.display(this);
-        for (Stone s : stones) s.display(this);
+
+        for (Player p : players) p.render(this);
+        for (Stone s : stones) s.render(this);
 
         mouseEvent();
     }
 
     private void mouseEvent() {
-        switch (gameStatus) {
+        switch (gameState) {
             case DEFAULT:
                 cursor(ARROW);
                 break;
@@ -83,8 +87,9 @@ public class Omok extends PApplet implements GUI, Protocol {
         if (button.isMouseOver(this))
             button.click();
 
-        if (gameStatus == RUNNING
-                && checkMouse() && mouseButton == LEFT) {
+        if (gameState == RUNNING &&
+                checkMouse() &&
+                mouseButton == LEFT) {
             int i = convertToIndex(mouseY);
             int j = convertToIndex(mouseX);
             thread.putStone(i, j);
@@ -112,8 +117,8 @@ public class Omok extends PApplet implements GUI, Protocol {
     }
 
     private boolean checkRange() {
-        for (int i = 0; i < 15; ++i) {
-            for (int j = 0; j < 15; ++j) {
+        for (int i = 0; i < Settings.LINE; ++i) {
+            for (int j = 0; j < Settings.LINE; ++j) {
                 if (((BLOCK * 2 - RANGE + (BLOCK * i)) < mouseX) &&
                         ((BLOCK * 2 + RANGE + (BLOCK * i)) > mouseX) &&
                         ((BLOCK * 2 - RANGE + (BLOCK * j)) < mouseY) &&
@@ -132,8 +137,8 @@ public class Omok extends PApplet implements GUI, Protocol {
         return true;
     }
 
-    void setGameStatus(int gameStatus) {
-        this.gameStatus = gameStatus;
+    void setGameState(int gameState) {
+        this.gameState = gameState;
     }
 
     void addPlayer(Player p, int id) {
@@ -141,19 +146,22 @@ public class Omok extends PApplet implements GUI, Protocol {
         if (p.isMe()) this.id = id;
     }
 
-    int howManyPlayer() {
+    int allPlayer() {
         return players.size();
     }
 
     void readyPlayer(int id) {
-        players.get(id).doReady();
+        players.get(id).isReady();
     }
 
     void setPlayerColor(int color0, int color1) {
         for (Player p : players) {
+
             if (p.hasInfo()) break;
+
             if (p.getId() == 0)
                 p.setStoneColor(color0);
+
             else if (p.getId() == 1)
                 p.setStoneColor(color1);
         }
@@ -170,7 +178,7 @@ public class Omok extends PApplet implements GUI, Protocol {
         stones.add(s);
     }
 
-    void makeBox(WinBox b) {
+    void drawBox(Box b) {
         boxes.add(b);
     }
 
@@ -183,12 +191,7 @@ public class Omok extends PApplet implements GUI, Protocol {
         stones = new CopyOnWriteArrayList<>();
     }
 
-    @Override
-    public void display(PApplet p) {
-
-    }
-
     public static void main(String[] args) {
-        PApplet.main(Omok.class);
+        PApplet.main(OmokGame.class);
     }
 }

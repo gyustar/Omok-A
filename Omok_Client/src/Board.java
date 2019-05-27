@@ -1,6 +1,6 @@
 import processing.core.PApplet;
 
-class Board implements GUI {
+class Board implements Settings {
     private final int x;
     private final int y;
     private final int w;
@@ -13,12 +13,12 @@ class Board implements GUI {
         h = BOARD;
     }
 
-    @Override
-    public void display(PApplet p) {
+    void render(PApplet p) {
+
         BrownColor(p);
         p.rect(x, y, w, h);
 
-        for (int i = 0; i < POINT; ++i) {
+        for (int i = 0; i < LINE; ++i) {
             p.line(x + BLOCK, y + BLOCK * (i + 1), w, y + BLOCK * (i + 1));
             p.line(x + BLOCK * (i + 1), y + BLOCK, x + BLOCK * (i + 1), h);
         }

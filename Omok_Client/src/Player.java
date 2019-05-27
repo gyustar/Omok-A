@@ -1,6 +1,6 @@
 import processing.core.PApplet;
 
-class Player implements GUI {
+class Player implements Settings {
     private final boolean mine;
     private final int id;
     private final int x;
@@ -13,8 +13,9 @@ class Player implements GUI {
     private boolean turn;
 
     Player(int id, boolean mine) {
-        this.mine = mine;
         this.id = id;
+        this.mine = mine;
+
         x = BLOCK;
         y = BOARD + 2 * BLOCK + (BUTTON_H + GAP) * this.id;
         w = BUTTON_W;
@@ -43,18 +44,18 @@ class Player implements GUI {
     }
 
     boolean isMe() {
-        return this.mine;
+        return mine;
     }
 
-    void doReady() {
-        this.ready = true;
+    void isReady() {
+        ready = true;
     }
 
-    @Override
-    public void display(PApplet p) {
+    void render(PApplet p) {
         drawBox(p);
         drawReady(p);
-        drawName(p);
+        drawId(p);
+
         if (turn) drawTurn(p);
         drawStoneColor(p);
     }
@@ -73,7 +74,7 @@ class Player implements GUI {
         p.text("READY", x + w - 2 * BLOCK, y + BLOCK - 3);
     }
 
-    private void drawName(PApplet p) {
+    private void drawId(PApplet p) {
         BlackColor(p);
         p.text("PLAYER " + id, x + BLOCK * 3, y + BLOCK - 3);
 

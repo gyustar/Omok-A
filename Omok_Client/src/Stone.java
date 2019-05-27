@@ -1,6 +1,6 @@
 import processing.core.PApplet;
 
-class Stone implements GUI {
+class Stone implements Settings {
     private final int i;
     private final int j;
     private final int color;
@@ -11,13 +11,13 @@ class Stone implements GUI {
         this.color = color;
     }
 
-    @Override
-    public void display(PApplet p) {
+    void render(PApplet p) {
         if (color == BLACK) BlackColor(p);
-        else if (color == WHITE) WhiteColor(p);
+        if (color == WHITE) WhiteColor(p);
 
         int x = BLOCK * (2 + j);
         int y = BLOCK * (2 + i);
+
         p.ellipse(x, y, DIAMETER, DIAMETER);
     }
 

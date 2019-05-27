@@ -1,5 +1,5 @@
 interface Protocol {
-    byte GAMESTATUS = 0;
+    byte GAMESTATE = 0;
     byte READY_0 = 1;
     byte READY_1 = 2;
     byte DICE_0 = 3;

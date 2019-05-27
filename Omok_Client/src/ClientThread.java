@@ -8,17 +8,17 @@ class ClientThread extends Thread implements Protocol {
     private byte[] data;
     private InputStream is;
     private OutputStream os;
-    private Omok omok;
+    private OmokGame omokgame;
     private int id;
 
-    ClientThread(Socket socket, Omok omok) {
+    ClientThread(Socket socket, OmokGame omokgame) {
         try {
             is = socket.getInputStream();
             os = socket.getOutputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.omok = omok;
+        this.omokgame = omokgame;
         data = new byte[SIZE];
     }
 
@@ -52,10 +52,9 @@ class ClientThread extends Thread implements Protocol {
                 }
                 break;
             }
-            System.out.println("receive");
 
-            int gameStatus = data[GAMESTATUS];
-            omok.setGameStatus(gameStatus);
+            int gameStatus = data[GAMESTATE];
+            omokgame.setGameState(gameStatus);
 
             if (gameStatus == DEFAULT) whenDefault();
             else if (gameStatus == ALL_ENTER) whenAllEnter();
@@ -76,56 +75,58 @@ class ClientThread extends Thread implements Protocol {
                 ex.printStackTrace();
             }
         }
-        System.out.println("send");
     }
 
     private void whenDefault() {
-        if (omok.howManyPlayer() != 0)
-            omok.resetGame();
+        if (omokgame.allPlayer() != 0)
+            omokgame.resetGame();
         id = 0;
-        omok.addPlayer(new Player(0, true), id);
+        omokgame.addPlayer(new Player(0, true), id);
     }
 
     private void whenAllEnter() {
-        if (omok.howManyPlayer() == 0) {
+        if (omokgame.allPlayer() == 0) {
             id = 1;
-            omok.addPlayer(new Player(0, false), id);
-            omok.addPlayer(new Player(1, true), id);
-        } else if (omok.howManyPlayer() == 1) {
-            omok.addPlayer(new Player(1, false), id);
-        } else if (omok.howManyPlayer() == 2) {
-            omok.resetGame();
-            omok.addPlayer(new Player(0, id == 0), id);
-            omok.addPlayer(new Player(1, id == 1), id);
+            omokgame.addPlayer(new Player(0, false), id);
+            omokgame.addPlayer(new Player(1, true), id);
+
+        } else if (omokgame.allPlayer() == 1) {
+            omokgame.addPlayer(new Player(1, false), id);
+
+        } else if (omokgame.allPlayer() == 2) {
+            omokgame.resetGame();
+            omokgame.addPlayer(new Player(0, id == 0), id);
+            omokgame.addPlayer(new Player(1, id == 1), id);
         }
-        if (data[READY_0] == 1) omok.readyPlayer(0);
-        if (data[READY_1] == 1) omok.readyPlayer(1);
-        if (data[READY_0 + id] != 1) omok.activeButton();
+        if (data[READY_0] == 1) omokgame.readyPlayer(0);
+        if (data[READY_1] == 1) omokgame.readyPlayer(1);
+        if (data[READY_0 + id] != 1) omokgame.activeButton();
     }
 
     private void whenAllReady() {
         int dice = data[DICE_0 + id];
         int color = data[COLOR_0 + id];
-        omok.makeBox(new WinBox(dice, color));
+        omokgame.drawBox(new Box(dice, color));
     }
 
     private void whenRunning() {
-        omok.setPlayerColor(data[COLOR_0], data[COLOR_1]);
+        omokgame.setPlayerColor(data[COLOR_0], data[COLOR_1]);
         System.out.println(data[TURN]);
-        omok.changeTurn(data[TURN]);
+        omokgame.changeTurn(data[TURN]);
 
         int i = data[STONE_I];
         int j = data[STONE_J];
         int color = data[STONE_C];
+
         if (color != NONE)
-            omok.addStone(new Stone(i, j, color));
+            omokgame.addStone(new Stone(i, j, color));
     }
 
     private void whenEnd() {
         int i = data[STONE_I];
         int j = data[STONE_J];
         int color = data[STONE_C];
-        omok.addStone(new Stone(i, j, color));
-        omok.makeBox(new WinBox(data[WINNER]));
+        omokgame.addStone(new Stone(i, j, color));
+        omokgame.drawBox(new Box(data[WINNER]));
     }
 }
