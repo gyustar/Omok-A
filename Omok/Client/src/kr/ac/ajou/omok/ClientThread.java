@@ -38,7 +38,6 @@ class ClientThread extends Thread implements Protocol {
                 }
                 break;
             }
-            System.out.println("receive");
 
             int gameStatus = data[GAMESTATUS];
             window.setGameStatus(gameStatus);
@@ -62,7 +61,6 @@ class ClientThread extends Thread implements Protocol {
                 ex.printStackTrace();
             }
         }
-        System.out.println("send");
     }
 
     private void whenAllEnter() {
@@ -83,14 +81,17 @@ class ClientThread extends Thread implements Protocol {
     }
 
     private void whenAllReady() {
-        int dice = data[DICE_0 + id];
-        int color = data[COLOR_0 + id];
-        window.makeBox(new Box(dice, color));
+        if (data[READY_TO_RUN_0] == 0 && data[READY_TO_RUN_1] == 0) {
+            int dice = data[DICE_0 + id];
+            int color = data[COLOR_0 + id];
+            window.makeBox(new Box(dice, color));
+        } else if (data[READY_TO_RUN_0] == 1 && data[READY_TO_RUN_1] == 1) {
+            sendData();
+        }
     }
 
     private void whenRunning() {
         window.setPlayerColor(data[COLOR_0], data[COLOR_1]);
-        System.out.println(data[TURN]);
         window.changeTurn(data[TURN]);
 
         int i = data[STONE_I];

@@ -173,13 +173,15 @@ public class Window extends PApplet implements GUI, Protocol {
     void resetGame() {
         players = new CopyOnWriteArrayList<>();
         stones = new CopyOnWriteArrayList<>();
+        boxes = new CopyOnWriteArrayList<>();
+        myTurn = false;
     }
 
     private void connect() {
         Socket socket;
         try {
             socket = new Socket();
-            socket.connect(new InetSocketAddress("192.168.11.27", 5000));
+            socket.connect(new InetSocketAddress("172.30.32.145", 5000));
             System.out.println("연결 성공\n");
             thread = new ClientThread(socket, this);
             thread.start();

@@ -130,7 +130,7 @@ class ServerThread extends Thread implements Protocol {
                             data[TURN] = 1;
                         }
                         broadcast();
-                    }
+                    } else broadcast();
                     break;
                 case RUNNING:
                     int i = data[STONE_I];
@@ -148,9 +148,6 @@ class ServerThread extends Thread implements Protocol {
                     break;
                 case END:
                     data = new byte[SIZE];
-                    data[STONE_I] = -1;
-                    data[STONE_J] = -1;
-                    data[TURN] = -1;
                     data[GAMESTATUS] = ALL_ENTER;
                     omok = new Omok();
 

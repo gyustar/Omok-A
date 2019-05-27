@@ -3,6 +3,8 @@ package kr.ac.ajou.omok;
 import processing.core.PApplet;
 
 class Button implements GUI {
+    private static final Button INSTANCE = new Button();
+
     private final int x;
     private final int y;
     private final int w;
@@ -32,7 +34,7 @@ class Button implements GUI {
     }
 
     static Button getInstance() {
-        return new Button();
+        return INSTANCE;
     }
 
     @Override

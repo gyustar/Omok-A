@@ -9,7 +9,7 @@ interface Protocol {
     byte COLOR_0 = 5;
     byte COLOR_1 = 6;
     byte READY_TO_RUN_0 = 7;
-    //    byte READY_TO_RUN_1 = 8;
+    byte READY_TO_RUN_1 = 8;
     byte STONE_I = 9;
     byte STONE_J = 10;
     byte STONE_C = 11;

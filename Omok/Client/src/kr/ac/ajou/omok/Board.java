@@ -3,6 +3,8 @@ package kr.ac.ajou.omok;
 import processing.core.PApplet;
 
 class Board implements GUI {
+    private static final Board INSTANCE = new Board();
+
     private final int x;
     private final int y;
     private final int w;
@@ -16,7 +18,7 @@ class Board implements GUI {
     }
 
     static Board getInstance() {
-        return new Board();
+        return INSTANCE;
     }
 
     @Override
