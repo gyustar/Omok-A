@@ -37,10 +37,9 @@ public class Window extends PApplet implements GUI, Protocol {
 
     @Override
     public void draw() {
-        background(WHITE_COLOR);
+        this.display(this);
         board.display(this);
         button.display(this);
-
         for (Box b : boxes) {
             b.display(this);
             if (b.isEnd()) {
@@ -50,8 +49,6 @@ public class Window extends PApplet implements GUI, Protocol {
         }
         for (PlayerInfo p : players) p.display(this);
         for (Stone s : stones) s.display(this);
-
-        mouseEvent();
     }
 
     private void mouseEvent() {
@@ -181,7 +178,7 @@ public class Window extends PApplet implements GUI, Protocol {
         Socket socket;
         try {
             socket = new Socket();
-            socket.connect(new InetSocketAddress("172.30.32.145", 5000));
+            socket.connect(new InetSocketAddress("192.168.11.27", 5000));
             System.out.println("연결 성공\n");
             thread = new ClientThread(socket, this);
             thread.start();
@@ -193,7 +190,8 @@ public class Window extends PApplet implements GUI, Protocol {
 
     @Override
     public void display(PApplet p) {
-
+        background(WHITE_COLOR);
+        mouseEvent();
     }
 
     public static void main(String[] args) {
