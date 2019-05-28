@@ -85,8 +85,11 @@ public class Box implements GUI {
         } else if (count <= 0) end = true;
     }
 
-    boolean isEnd() {
-        return this.end;
+    boolean isDiceBoxEnd() {
+        return this.end && this.boxKind == DICEBOX;
     }
 
+    boolean isWinBoxEnd() {
+        return this.end && this.boxKind == WINBOX;
+    }
 }

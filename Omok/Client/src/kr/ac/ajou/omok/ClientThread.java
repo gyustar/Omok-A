@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 class ClientThread extends Thread implements Protocol {
+    private static final Object MUTEX = new Object();
     private static final int NONE = 0;
     private byte[] data;
     private InputStream is;
@@ -28,8 +30,12 @@ class ClientThread extends Thread implements Protocol {
     public void run() {
         while (true) {
             try {
-                int ret = is.read(data);
+                byte[] bytes = new byte[SIZE];
+                int ret = is.read(bytes);
                 if (ret == -1) throw new IOException();
+                synchronized (MUTEX) {
+                    data = Arrays.copyOf(bytes, SIZE);
+                }
             } catch (IOException e) {
                 try {
                     is.close();
@@ -38,8 +44,10 @@ class ClientThread extends Thread implements Protocol {
                 }
                 break;
             }
-
-            int gameStatus = data[GAMESTATUS];
+            int gameStatus;
+            synchronized (MUTEX) {
+                gameStatus = data[GAMESTATUS];
+            }
             window.setGameStatus(gameStatus);
 
             if (gameStatus == DEFAULT) whenDefault();
@@ -63,6 +71,13 @@ class ClientThread extends Thread implements Protocol {
         }
     }
 
+    private void whenDefault() {
+        if (window.howManyPlayer() != 0)
+            window.resetGame();
+        id = 0;
+        window.addPlayer(new PlayerInfo(0, true), id);
+    }
+
     private void whenAllEnter() {
         if (window.howManyPlayer() == 0) {
             id = 1;
@@ -75,12 +90,14 @@ class ClientThread extends Thread implements Protocol {
             window.addPlayer(new PlayerInfo(0, id == 0), id);
             window.addPlayer(new PlayerInfo(1, id == 1), id);
         }
-        if (data[READY_0] == 1) window.readyPlayer(0);
-        if (data[READY_1] == 1) window.readyPlayer(1);
-        if (data[READY_0 + id] != 1) window.activeButton();
+        synchronized (MUTEX) {
+            if (data[READY_0] == 1) window.readyPlayer(0);
+            if (data[READY_1] == 1) window.readyPlayer(1);
+            if (data[READY_0 + id] != 1) window.activeButton();
+        }
     }
 
-    private void whenAllReady() {
+    synchronized private void whenAllReady() {
         if (data[READY_TO_RUN_0] == 0 && data[READY_TO_RUN_1] == 0) {
             int dice = data[DICE_0 + id];
             int color = data[COLOR_0 + id];
@@ -90,7 +107,7 @@ class ClientThread extends Thread implements Protocol {
         }
     }
 
-    private void whenRunning() {
+    synchronized private void whenRunning() {
         window.setPlayerColor(data[COLOR_0], data[COLOR_1]);
         window.changeTurn(data[TURN]);
 
@@ -101,7 +118,7 @@ class ClientThread extends Thread implements Protocol {
             window.addStone(new Stone(i, j, color));
     }
 
-    private void whenEnd() {
+    synchronized private void whenEnd() {
         int i = data[STONE_I];
         int j = data[STONE_J];
         int color = data[STONE_C];
@@ -109,27 +126,26 @@ class ClientThread extends Thread implements Protocol {
         window.makeBox(new Box(data[WINNER]));
     }
 
-    void putStone(int i, int j) {
+    synchronized void putStone(int i, int j) {
         data[STONE_I] = (byte) i;
         data[STONE_J] = (byte) j;
         data[STONE_C] = data[COLOR_0 + data[TURN]];
         sendData();
     }
 
-    void amReady() {
+    synchronized void amReady() {
         data[READY_0 + id] = 1;
         sendData();
     }
 
-    void canRun() {
-        data[READY_TO_RUN_0 + id] = 1;
+    synchronized void resetThread() {
+        data = new byte[SIZE];
+        data[GAMESTATUS] = END;
         sendData();
     }
 
-    private void whenDefault() {
-        if (window.howManyPlayer() != 0)
-            window.resetGame();
-        id = 0;
-        window.addPlayer(new PlayerInfo(0, true), id);
+    synchronized void canRun() {
+        data[READY_TO_RUN_0 + id] = 1;
+        sendData();
     }
 }

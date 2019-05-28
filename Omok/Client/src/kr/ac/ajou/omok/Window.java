@@ -42,8 +42,12 @@ public class Window extends PApplet implements GUI, Protocol {
         button.display(this);
         for (Box b : boxes) {
             b.display(this);
-            if (b.isEnd()) {
+
+            if (b.isDiceBoxEnd()) {
                 thread.canRun();
+                boxes.remove(b);
+            } else if (b.isWinBoxEnd()) {
+                thread.resetThread();
                 boxes.remove(b);
             }
         }
