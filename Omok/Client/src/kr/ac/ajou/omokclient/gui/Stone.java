@@ -1,13 +1,13 @@
-package kr.ac.ajou.omok;
+package kr.ac.ajou.omokclient.gui;
 
 import processing.core.PApplet;
 
-class Stone implements GUI {
+public class Stone implements GUI {
     private final int i;
     private final int j;
     private final int color;
 
-    Stone(int i, int j, int color) {
+    public Stone(int i, int j, int color) {
         this.i = i;
         this.j = j;
         this.color = color;

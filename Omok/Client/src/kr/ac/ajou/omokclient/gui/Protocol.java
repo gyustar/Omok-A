@@ -1,6 +1,6 @@
-package kr.ac.ajou.omok;
+package kr.ac.ajou.omokclient.gui;
 
-interface Protocol {
+public interface Protocol {
     byte GAMESTATUS = 0;
     byte READY_0 = 1;
     byte READY_1 = 2;

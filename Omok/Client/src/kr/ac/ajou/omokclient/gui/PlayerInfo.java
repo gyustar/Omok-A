@@ -1,8 +1,8 @@
-package kr.ac.ajou.omok;
+package kr.ac.ajou.omokclient.gui;
 
 import processing.core.PApplet;
 
-class PlayerInfo implements GUI {
+public class PlayerInfo implements GUI {
     private final boolean mine;
     private final int id;
     private final int x;
@@ -14,7 +14,7 @@ class PlayerInfo implements GUI {
     private int stoneColor;
     private boolean turn;
 
-    PlayerInfo(int id, boolean mine) {
+    public PlayerInfo(int id, boolean mine) {
         this.mine = mine;
         this.id = id;
         x = BLOCK;

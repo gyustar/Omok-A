@@ -1,4 +1,4 @@
-package kr.ac.ajou.omok;
+package kr.ac.ajou.omokclient.gui;
 
 import processing.core.PApplet;
 

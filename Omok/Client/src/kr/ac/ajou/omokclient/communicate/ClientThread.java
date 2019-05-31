@@ -1,4 +1,6 @@
-package kr.ac.ajou.omok;
+package kr.ac.ajou.omokclient.communicate;
+
+import kr.ac.ajou.omokclient.gui.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,7 +8,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
-class ClientThread extends Thread implements Protocol {
+public class ClientThread extends Thread implements Protocol {
     private static final Object MUTEX = new Object();
     private static final int NONE = 0;
     private byte[] data;
@@ -15,7 +17,7 @@ class ClientThread extends Thread implements Protocol {
     private Window window;
     private int id;
 
-    ClientThread(Socket socket, Window window) {
+    public ClientThread(Socket socket, Window window) {
         try {
             is = socket.getInputStream();
             os = socket.getOutputStream();
@@ -126,25 +128,25 @@ class ClientThread extends Thread implements Protocol {
         window.makeBox(new Box(data[WINNER]));
     }
 
-    synchronized void putStone(int i, int j) {
+    synchronized public void putStone(int i, int j) {
         data[STONE_I] = (byte) i;
         data[STONE_J] = (byte) j;
         data[STONE_C] = data[COLOR_0 + data[TURN]];
         sendData();
     }
 
-    synchronized void amReady() {
+    synchronized public void amReady() {
         data[READY_0 + id] = 1;
         sendData();
     }
 
-    synchronized void resetThread() {
+    synchronized public void resetThread() {
         data = new byte[SIZE];
         data[GAMESTATUS] = END;
         sendData();
     }
 
-    synchronized void canRun() {
+    synchronized public void canRun() {
         data[READY_TO_RUN_0 + id] = 1;
         sendData();
     }

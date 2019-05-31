@@ -1,4 +1,4 @@
-package kr.ac.ajou.omok;
+package kr.ac.ajou.omokclient.gui;
 
 import processing.core.PApplet;
 
@@ -45,7 +45,8 @@ class Button implements GUI {
         if (!onClick) fillWhite(p);
         p.rect(InnerX, InnerY, InnerW, InnerH);
 
-        fillBlack(p);
+        if (activation) fillBlack(p);
+        else fillGrey(p);
         p.textSize(TEXT_SIZE);
         p.textAlign(p.CENTER, p.CENTER);
         p.text("READY", InnerX + InnerW / 2, InnerY + InnerH / 2 - 3);

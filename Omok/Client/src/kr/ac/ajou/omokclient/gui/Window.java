@@ -1,5 +1,6 @@
-package kr.ac.ajou.omok;
+package kr.ac.ajou.omokclient.gui;
 
+import kr.ac.ajou.omokclient.communicate.ClientThread;
 import processing.core.PApplet;
 
 import java.io.IOException;
@@ -125,24 +126,24 @@ public class Window extends PApplet implements GUI, Protocol {
         return true;
     }
 
-    void setGameStatus(int gameStatus) {
+    public void setGameStatus(int gameStatus) {
         this.gameStatus = gameStatus;
     }
 
-    void addPlayer(PlayerInfo p, int id) {
+    public void addPlayer(PlayerInfo p, int id) {
         players.add(p);
         if (p.isMe()) this.id = id;
     }
 
-    int howManyPlayer() {
+    public int howManyPlayer() {
         return players.size();
     }
 
-    void readyPlayer(int id) {
+    public void readyPlayer(int id) {
         players.get(id).doReady();
     }
 
-    void setPlayerColor(int color0, int color1) {
+    public void setPlayerColor(int color0, int color1) {
         for (PlayerInfo p : players) {
             if (p.hasInfo()) break;
             if (p.getId() == 0)
@@ -152,26 +153,26 @@ public class Window extends PApplet implements GUI, Protocol {
         }
     }
 
-    void changeTurn(int turn) {
+    public void changeTurn(int turn) {
         myTurn = (this.id == turn);
         for (PlayerInfo p : players) {
             p.changeTurn(turn);
         }
     }
 
-    void addStone(Stone s) {
+    public void addStone(Stone s) {
         stones.add(s);
     }
 
-    void makeBox(Box b) {
+    public void makeBox(Box b) {
         boxes.add(b);
     }
 
-    void activeButton() {
+    public void activeButton() {
         button.active();
     }
 
-    void resetGame() {
+    public void resetGame() {
         players = new CopyOnWriteArrayList<>();
         stones = new CopyOnWriteArrayList<>();
         boxes = new CopyOnWriteArrayList<>();

@@ -1,17 +1,17 @@
-package kr.ac.ajou.omok;
+package kr.ac.ajou.omokserver.util;
 
-class Omok {
+public class Omok {
     private byte[][] stones;
 
-    Omok() {
+    public Omok() {
         stones = new byte[15][15];
     }
 
-    void putStone(int i, int j, int color) {
+    public void putStone(int i, int j, int color) {
         stones[i][j] = (byte) color;
     }
 
-    boolean winCheck(int i, int j) {
+    public boolean winCheck(int i, int j) {
         return checkHorizon(i, j) || checkVertical(i, j) ||
                 checkDiagonalRU(i, j) || checkDiagonalRD(i, j);
     }

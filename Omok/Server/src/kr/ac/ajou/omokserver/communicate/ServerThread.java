@@ -1,4 +1,6 @@
-package kr.ac.ajou.omok;
+package kr.ac.ajou.omokserver.communicate;
+
+import kr.ac.ajou.omokserver.util.Omok;
 
 import java.io.IOException;
 import java.io.InputStream;

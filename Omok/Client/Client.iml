@@ -8,9 +8,18 @@
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
-      <library>
+      <library name="Processing">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/core.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Gson">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/gson-2.8.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

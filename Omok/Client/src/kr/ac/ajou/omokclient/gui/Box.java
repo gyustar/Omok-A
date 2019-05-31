@@ -1,4 +1,4 @@
-package kr.ac.ajou.omok;
+package kr.ac.ajou.omokclient.gui;
 
 import processing.core.PApplet;
 
@@ -18,7 +18,7 @@ public class Box implements GUI {
 
     private int winner;
 
-    Box(int dice, int color) {
+    public Box(int dice, int color) {
         this.boxKind = DICEBOX;
         this.count = FRAME_SECOND * 11;
         this.end = false;
@@ -27,7 +27,7 @@ public class Box implements GUI {
         this.color = color;
     }
 
-    Box(int winner) {
+    public Box(int winner) {
         this.boxKind = WINBOX;
         this.count = FRAME_SECOND * 6;
         this.end = false;

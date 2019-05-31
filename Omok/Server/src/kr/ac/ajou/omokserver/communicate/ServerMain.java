@@ -1,4 +1,4 @@
-package kr.ac.ajou.omok;
+package kr.ac.ajou.omokserver.communicate;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
