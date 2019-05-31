@@ -3,7 +3,7 @@ package kr.ac.ajou.omokclient.gui;
 import processing.core.PApplet;
 
 public class PlayerInfo implements GUI {
-    private final boolean mine;
+    private final boolean isMe;
     private final int id;
     private final int x;
     private final int y;
@@ -14,8 +14,8 @@ public class PlayerInfo implements GUI {
     private int stoneColor;
     private boolean turn;
 
-    public PlayerInfo(int id, boolean mine) {
-        this.mine = mine;
+    public PlayerInfo(int id, boolean isMe) {
+        this.isMe = isMe;
         this.id = id;
         x = BLOCK;
         y = BOARD + 2 * BLOCK + (BUTTON_H + GAP) * this.id;
@@ -45,7 +45,7 @@ public class PlayerInfo implements GUI {
     }
 
     boolean isMe() {
-        return this.mine;
+        return this.isMe;
     }
 
     void doReady() {
@@ -79,7 +79,7 @@ public class PlayerInfo implements GUI {
         fillBlack(p);
         p.text("PLAYER " + id, x + BLOCK * 3, y + BLOCK - 3);
 
-        if (mine) {
+        if (isMe) {
             fillGreen(p);
             p.ellipse(x + BLOCK * 5, y + BLOCK, 5, 5);
         }

@@ -9,7 +9,9 @@ import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Window extends PApplet implements GUI, Protocol {
+import static kr.ac.ajou.omokclient.protoocol.GameStatusData.*;
+
+public class Window extends PApplet implements GUI {
     private Board board;
     private Button button;
     private List<PlayerInfo> players;
@@ -19,6 +21,8 @@ public class Window extends PApplet implements GUI, Protocol {
     private int gameStatus;
     private int id;
     private boolean myTurn;
+    private int dice;
+    private int color;
 
     @Override
     public void setup() {
@@ -42,15 +46,11 @@ public class Window extends PApplet implements GUI, Protocol {
         board.display(this);
         button.display(this);
         for (Box b : boxes) {
-            b.display(this);
-
-            if (b.isDiceBoxEnd()) {
-                thread.canRun();
+            if (boxes.size() > 1) {
                 boxes.remove(b);
-            } else if (b.isWinBoxEnd()) {
-                thread.resetThread();
-                boxes.remove(b);
+                continue;
             }
+            b.display(this);
         }
         for (PlayerInfo p : players) p.display(this);
         for (Stone s : stones) s.display(this);
@@ -128,19 +128,31 @@ public class Window extends PApplet implements GUI, Protocol {
 
     public void setGameStatus(int gameStatus) {
         this.gameStatus = gameStatus;
+        if (gameStatus == ALL_ENTER)
+            button.active();
+        else if (gameStatus == RUNNING)
+            boxes = boxes = new CopyOnWriteArrayList<>();
+        else if (gameStatus == RESET)
+            resetGame();
     }
 
-    public void addPlayer(PlayerInfo p, int id) {
-        players.add(p);
-        if (p.isMe()) this.id = id;
-    }
-
-    public int howManyPlayer() {
-        return players.size();
+    public void addPlayer(int id, boolean isMe) {
+        players.add(new PlayerInfo(id, isMe));
+        if (isMe) this.id = id;
     }
 
     public void readyPlayer(int id) {
-        players.get(id).doReady();
+        for (PlayerInfo p : players) {
+            if (p.getId() == id) p.doReady();
+        }
+    }
+
+    public void setDice(int dice) {
+        this.dice = dice;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     public void setPlayerColor(int color0, int color1) {

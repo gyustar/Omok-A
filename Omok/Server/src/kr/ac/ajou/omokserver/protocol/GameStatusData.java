@@ -2,8 +2,10 @@ package kr.ac.ajou.omokserver.protocol;
 
 public class GameStatusData {
     public static final int DEFAULT = 1000;
-    public static final int RUNNING = 1001;
-    public static final int END = 10002;
+    public static final int ALL_ENTER = 1001;
+    public static final int RUNNING = 1002;
+    public static final int END = 1003;
+    public static final int RESET = 1004;
 
     private int gameStatus;
 
