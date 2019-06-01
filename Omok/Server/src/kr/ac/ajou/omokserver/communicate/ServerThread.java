@@ -4,14 +4,14 @@ import com.google.gson.Gson;
 import kr.ac.ajou.omokserver.util.Omok;
 import kr.ac.ajou.omokserver.protocol.*;
 
+import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static kr.ac.ajou.omokserver.protocol.GameStatusData.ALL_ENTER;
-import static kr.ac.ajou.omokserver.protocol.GameStatusData.DEFAULT;
+import static kr.ac.ajou.omokserver.protocol.GameStatusData.*;
 
 class ServerThread extends Thread {
     private static final int BLACK = 1;
@@ -29,6 +29,7 @@ class ServerThread extends Thread {
     private byte[] data;
     private Omok omok;
     private int id;
+    private int color;
 
     ServerThread(Socket socket) {
         this.socket = socket;
@@ -123,6 +124,14 @@ class ServerThread extends Thread {
         int dice1 = (int) (Math.random() * 6) + 1;
         while (dice0 == dice1) {
             dice1 = (int) (Math.random() * 6) + 1;
+        }
+
+        if (dice0 > dice1) {
+            if (id == 0) color = BLACK;
+            else color = WHITE;
+        } else {
+            if (id == 0) color = WHITE;
+            else color = BLACK;
         }
 
         String msg = "P0's dice number: " + dice0 + "\n"
@@ -282,10 +291,30 @@ class ServerThread extends Thread {
                     end = System.currentTimeMillis();
                 }
 
-                start = System.currentTimeMillis();
-                end = start;
                 msgData = new MsgData("Empty");
                 broadcast(new Protocol(gson.toJson(msgData), "MsgData"));
+
+                GameStatusData gameStatusData = new GameStatusData(RUNNING);
+                broadcast(new Protocol(gson.toJson(gameStatusData), "GameStatusData"));
+
+                ColorData colorData = null;
+                TurnData turnData = null;
+
+                if (id == 0) {
+                    colorData = new ColorData(color, -color);
+                    if (color == BLACK) turnData = new TurnData(0);
+                    else if (color == WHITE) turnData = new TurnData(1);
+                } else if (id == 1) {
+                    colorData = new ColorData(-color, color);
+                    if (color == BLACK) turnData = new TurnData(1);
+                    else if (color == WHITE) turnData = new TurnData(0);
+                }
+                try {
+                    broadcast(new Protocol(gson.toJson(colorData), "ColorData"));
+                    broadcast(new Protocol(gson.toJson(turnData), "TurnData"));
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
