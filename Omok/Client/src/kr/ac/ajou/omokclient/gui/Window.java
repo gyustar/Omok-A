@@ -131,7 +131,7 @@ public class Window extends PApplet implements GUI {
         if (gameStatus == ALL_ENTER)
             button.active();
         else if (gameStatus == RUNNING)
-            msgBoxes = msgBoxes = new CopyOnWriteArrayList<>();
+            msgBoxes = new CopyOnWriteArrayList<>();
         else if (gameStatus == RESET)
             resetGame();
     }

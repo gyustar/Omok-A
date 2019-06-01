@@ -68,7 +68,6 @@ public class ClientThread extends Thread {
                         analysisIdData(idData);
                         break;
                     case "PlayerData":
-
                         PlayerData playerData =
                                 gson.fromJson(protocol.getData(), PlayerData.class);
                         analysisPlayerData(playerData);

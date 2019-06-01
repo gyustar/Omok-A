@@ -4,11 +4,9 @@ import com.google.gson.Gson;
 import kr.ac.ajou.omokserver.util.Omok;
 import kr.ac.ajou.omokserver.protocol.*;
 
-import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static kr.ac.ajou.omokserver.protocol.GameStatusData.*;
@@ -16,6 +14,7 @@ import static kr.ac.ajou.omokserver.protocol.GameStatusData.*;
 class ServerThread extends Thread {
     private static final int BLACK = 1;
     private static final int WHITE = -1;
+    private static final int NONE = 0;
     private static final Object MUTEX = new Object();
 
     private static List<ServerThread> clients = new ArrayList<>();
@@ -44,6 +43,7 @@ class ServerThread extends Thread {
         omok = new Omok();
         gson = new Gson();
         data = new byte[1024];
+        color = NONE;
 
         synchronized (MUTEX) {
             clients.add(this);
@@ -78,11 +78,27 @@ class ServerThread extends Thread {
     }
 
     private void reset() {
-        omok = new Omok();
+        synchronized (MUTEX) {
+            readyCount = 0;
+            for (ServerThread t : clients) {
+                t.omok = new Omok();
+                t.color = NONE;
+                t.sendPlayerData();
+            }
+        }
+
+        GameStatusData gameStatusData = new GameStatusData(ALL_ENTER);
+        broadcast(new Protocol(gson.toJson(gameStatusData), "GameStatusData"));
+    }
+
+    synchronized private void clientExit() {
         n--;
-        id = n;
-        sendIdData();
-        sendPlayerData();
+        for (ServerThread t : clients) {
+            t.omok = new Omok();
+            t.id = 0;
+            t.sendIdData();
+            t.sendPlayerData();
+        }
     }
 
     private void broadcast(Protocol protocol) {
@@ -177,10 +193,10 @@ class ServerThread extends Thread {
                 }
             }
         } catch (IOException e) {
-            reset();
             synchronized (MUTEX) {
                 clients.remove(this);
             }
+            clientExit();
         }
 //        broadcast();
 //        while (this.socket.isConnected() && !this.socket.isClosed()) {
@@ -344,6 +360,8 @@ class ServerThread extends Thread {
 
             gameStatusData = new GameStatusData(RESET);
             broadcast(new Protocol(gson.toJson(gameStatusData), "GameStatusData"));
+
+            reset();
         } else {
             TurnData turnData = new TurnData((id * -1) + 1);
             broadcast(new Protocol(gson.toJson(turnData), "TurnData"));
