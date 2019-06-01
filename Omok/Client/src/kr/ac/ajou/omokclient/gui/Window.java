@@ -1,5 +1,8 @@
 package kr.ac.ajou.omokclient.gui;
 
+import static kr.ac.ajou.omokclient.gui.Constant.*;
+import static kr.ac.ajou.omokclient.protoocol.GameStatusData.*;
+
 import kr.ac.ajou.omokclient.communicate.ClientThread;
 import processing.core.PApplet;
 
@@ -8,8 +11,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import static kr.ac.ajou.omokclient.protoocol.GameStatusData.*;
 
 public class Window extends PApplet implements GUI {
     private Board board;
@@ -21,8 +22,6 @@ public class Window extends PApplet implements GUI {
     private int gameStatus;
     private int id;
     private boolean myTurn;
-    private int dice;
-    private int color;
 
     @Override
     public void setup() {
@@ -147,14 +146,6 @@ public class Window extends PApplet implements GUI {
         }
     }
 
-    public void setDice(int dice) {
-        this.dice = dice;
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
-
     public void setPlayerColor(int color0, int color1) {
         for (PlayerInfo p : players) {
             if (p.hasInfo()) break;
@@ -184,15 +175,12 @@ public class Window extends PApplet implements GUI {
         msgBoxes = new CopyOnWriteArrayList<>();
     }
 
-    public void activeButton() {
-        button.active();
-    }
-
-    public void resetGame() {
+    private void resetGame() {
         players = new CopyOnWriteArrayList<>();
         stones = new CopyOnWriteArrayList<>();
         msgBoxes = new CopyOnWriteArrayList<>();
         myTurn = false;
+        button.unactive();
     }
 
     private void connect() {

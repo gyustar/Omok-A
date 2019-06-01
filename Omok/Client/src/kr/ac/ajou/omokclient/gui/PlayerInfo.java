@@ -2,6 +2,8 @@ package kr.ac.ajou.omokclient.gui;
 
 import processing.core.PApplet;
 
+import static kr.ac.ajou.omokclient.gui.Constant.*;
+
 public class PlayerInfo implements GUI {
     private final boolean isMe;
     private final int id;
@@ -14,7 +16,7 @@ public class PlayerInfo implements GUI {
     private int stoneColor;
     private boolean turn;
 
-    public PlayerInfo(int id, boolean isMe) {
+    PlayerInfo(int id, boolean isMe) {
         this.isMe = isMe;
         this.id = id;
         x = BLOCK;
@@ -42,10 +44,6 @@ public class PlayerInfo implements GUI {
 
     boolean hasInfo() {
         return stoneColor != NONE;
-    }
-
-    boolean isMe() {
-        return this.isMe;
     }
 
     void doReady() {

@@ -8,8 +8,6 @@ import java.io.*;
 import java.net.Socket;
 
 public class ClientThread extends Thread {
-    private static final Object MUTEX = new Object();
-    private static final int NONE = 0;
     private Socket socket;
     private OutputStream os;
     private DataOutputStream dos;
@@ -35,7 +33,7 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
         try (InputStream is = socket.getInputStream();
-             DataInputStream dis = new DataInputStream(is);) {
+             DataInputStream dis = new DataInputStream(is)) {
 
             byte[] data = new byte[1024];
 
@@ -168,61 +166,6 @@ public class ClientThread extends Thread {
         window.addStone(new Stone(i, j, color));
     }
 
-//    private void whenDefault() {
-//        if (window.howManyPlayer() != 0)
-//            window.resetGame();
-//        id = 0;
-//        window.addPlayer(new PlayerInfo(0, true), id);
-//    }
-//
-//    private void whenAllEnter() {
-//        if (window.howManyPlayer() == 0) {
-//            id = 1;
-//            window.addPlayer(new PlayerInfo(0, false), id);
-//            window.addPlayer(new PlayerInfo(1, true), id);
-//        } else if (window.howManyPlayer() == 1) {
-//            window.addPlayer(new PlayerInfo(1, false), id);
-//        } else if (window.howManyPlayer() == 2) {
-//            window.resetGame();
-//            window.addPlayer(new PlayerInfo(0, id == 0), id);
-//            window.addPlayer(new PlayerInfo(1, id == 1), id);
-//        }
-//        synchronized (MUTEX) {
-//            if (data[READY_0] == 1) window.readyPlayer(0);
-//            if (data[READY_1] == 1) window.readyPlayer(1);
-//            if (data[READY_0 + id] != 1) window.activeButton();
-//        }
-//    }
-//
-//    synchronized private void whenAllReady() {
-//        if (data[READY_TO_RUN_0] == 0 && data[READY_TO_RUN_1] == 0) {
-//            int dice = data[DICE_0 + id];
-//            int color = data[COLOR_0 + id];
-//            window.makeBox(new Box(dice, color));
-//        } else if (data[READY_TO_RUN_0] == 1 && data[READY_TO_RUN_1] == 1) {
-//            sendData();
-//        }
-//    }
-//
-//    synchronized private void whenRunning() {
-//        window.setPlayerColor(data[COLOR_0], data[COLOR_1]);
-//        window.changeTurn(data[TURN]);
-//
-//        int i = data[STONE_I];
-//        int j = data[STONE_J];
-//        int color = data[STONE_C];
-//        if (color != NONE)
-//            window.addStone(new Stone(i, j, color));
-//    }
-//
-//    synchronized private void whenEnd() {
-//        int i = data[STONE_I];
-//        int j = data[STONE_J];
-//        int color = data[STONE_C];
-//        window.addStone(new Stone(i, j, color));
-//        window.makeBox(new Box(data[WINNER]));
-//    }
-
     synchronized public void putStone(int i, int j) {
         StoneData stoneData = new StoneData(i, j, color);
         String json = gson.toJson(stoneData);
@@ -236,15 +179,4 @@ public class ClientThread extends Thread {
         Protocol protocol = new Protocol(json, "ReadyData");
         sendData(protocol);
     }
-
-//    synchronized public void resetThread() {
-//        data = new byte[SIZE];
-//        data[GAMESTATUS] = END;
-//        sendData();
-//    }
-
-//    synchronized public void canRun() {
-//        data[READY_TO_RUN_0 + id] = 1;
-//        sendData();
-//    }
 }

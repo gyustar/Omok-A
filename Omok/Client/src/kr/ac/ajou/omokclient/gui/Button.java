@@ -2,6 +2,8 @@ package kr.ac.ajou.omokclient.gui;
 
 import processing.core.PApplet;
 
+import static kr.ac.ajou.omokclient.gui.Constant.*;
+
 class Button implements GUI {
     private static final Button INSTANCE = new Button();
 

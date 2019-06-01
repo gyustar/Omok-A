@@ -2,6 +2,8 @@ package kr.ac.ajou.omokclient.gui;
 
 import processing.core.PApplet;
 
+import static kr.ac.ajou.omokclient.gui.Constant.*;
+
 class Board implements GUI {
     private static final Board INSTANCE = new Board();
 

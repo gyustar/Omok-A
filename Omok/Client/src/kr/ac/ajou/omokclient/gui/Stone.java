@@ -2,6 +2,8 @@ package kr.ac.ajou.omokclient.gui;
 
 import processing.core.PApplet;
 
+import static kr.ac.ajou.omokclient.gui.Constant.*;
+
 public class Stone implements GUI {
     private final int i;
     private final int j;

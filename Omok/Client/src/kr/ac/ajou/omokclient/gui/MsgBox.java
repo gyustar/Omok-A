@@ -2,6 +2,8 @@ package kr.ac.ajou.omokclient.gui;
 
 import processing.core.PApplet;
 
+import static kr.ac.ajou.omokclient.gui.Constant.*;
+
 public class MsgBox implements GUI {
     private static final int BOX_X = BLOCK;
     private static final int BOX_Y = BLOCK * 5;

@@ -91,13 +91,21 @@ class ServerThread extends Thread {
         broadcast(new Protocol(gson.toJson(gameStatusData), "GameStatusData"));
     }
 
-    synchronized private void clientExit() {
-        n--;
-        for (ServerThread t : clients) {
-            t.omok = new Omok();
-            t.id = 0;
-            t.sendIdData();
-            t.sendPlayerData();
+    private void clientExit() {
+        synchronized (MUTEX) {
+            n = clients.size();
+            readyCount = 0;
+            for (ServerThread t : clients) {
+                t.omok = new Omok();
+                t.id = 0;
+                t.color = NONE;
+                t.sendIdData();
+                t.broadcast(new Protocol(gson.toJson(new GameStatusData(RESET)),
+                        "GameStatusData"));
+                t.broadcast(new Protocol(gson.toJson(new GameStatusData(DEFAULT)),
+                        "GameStatusData"));
+                t.sendPlayerData();
+            }
         }
     }
 
@@ -107,13 +115,14 @@ class ServerThread extends Thread {
         int len = data.length;
 
         synchronized (MUTEX) {
-            for (ServerThread t : clients) {
+            for (int i = 0; i < clients.size(); ++i) {
+                ServerThread t = clients.get(i);
                 try {
                     t.dos.writeInt(len);
                     t.os.write(data, 0, len);
                 } catch (IOException e) {
-                    n = 0;
                     clients.remove(t);
+                    clientExit();
                 }
             }
         }
@@ -129,8 +138,8 @@ class ServerThread extends Thread {
             os.write(data, 0, len);
         } catch (IOException e) {
             synchronized (MUTEX) {
-                n = 0;
                 clients.remove(this);
+                clientExit();
             }
         }
     }
@@ -167,6 +176,10 @@ class ServerThread extends Thread {
                 try {
                     len = dis.readInt();
                 } catch (EOFException e) {
+                    synchronized (MUTEX) {
+                        clients.remove(this);
+                        clientExit();
+                    }
                     break;
                 }
 
@@ -198,72 +211,6 @@ class ServerThread extends Thread {
             }
             clientExit();
         }
-//        broadcast();
-//        while (this.socket.isConnected() && !this.socket.isClosed()) {
-//            try {
-//                int ret = is.read(data);
-//                if (ret == -1) throw new IOException();
-//            } catch (IOException e) {
-//                try {
-//                    is.close();
-//                } catch (IOException ex) {
-//                    ex.printStackTrace();
-//                }
-//                synchronized (MUTEX) {
-//                    this.reset();
-//                    clients.remove(this);
-//                    broadcast();
-//                    break;
-//                }
-//            }
-//            byte gameStatus = data[GAMESTATUS];
-//
-//            switch (gameStatus) {
-//                case DEFAULT:
-//                    broadcast();
-//                    break;
-//                case ALL_ENTER:
-//                    broadcast();
-//                    if (data[READY_0] == 1 && data[READY_1] == 1) {
-//                        data[GAMESTATUS] = ALL_READY;
-//                        throwDice();
-//                        broadcast();
-//                    }
-//                    break;
-//                case ALL_READY:
-//                    if (data[READY_TO_RUN_0] == 1 && data[READY_TO_RUN_1] == 1) {
-//                        data[GAMESTATUS] = RUNNING;
-//                        if (data[COLOR_0] == BLACK) {
-//                            data[TURN] = 0;
-//                        } else if (data[COLOR_1] == BLACK) {
-//                            data[TURN] = 1;
-//                        }
-//                        broadcast();
-//                    } else broadcast();
-//                    break;
-//                case RUNNING:
-//                    int i = data[STONE_I];
-//                    int j = data[STONE_J];
-//                    int color = data[STONE_C];
-//                    omok.putStone(i, j, color);
-//
-//                    if (omok.winCheck(i, j)) {
-//                        data[WINNER] = data[TURN];
-//                        data[GAMESTATUS] = END;
-//                    } else {
-//                        data[TURN] = (byte) (data[TURN] * -1 + 1);
-//                    }
-//                    broadcast();
-//                    break;
-//                case END:
-//                    data = new byte[SIZE];
-//                    data[GAMESTATUS] = ALL_ENTER;
-//                    omok = new Omok();
-//
-//                    broadcast();
-//                    break;
-//            }
-//        }
     }
 
     private void analysisReadyData(ReadyData readyData) {
@@ -351,14 +298,11 @@ class ServerThread extends Thread {
             MsgData msgData = new MsgData(msg);
             broadcast(new Protocol(gson.toJson(msgData), "MsgData"));
 
-            GameStatusData gameStatusData = new GameStatusData(END);
-            broadcast(new Protocol(gson.toJson(gameStatusData), "GameStatusData"));
-
             while ((end - start) < 3000.0) {
                 end = System.currentTimeMillis();
             }
 
-            gameStatusData = new GameStatusData(RESET);
+            GameStatusData gameStatusData = new GameStatusData(RESET);
             broadcast(new Protocol(gson.toJson(gameStatusData), "GameStatusData"));
 
             reset();

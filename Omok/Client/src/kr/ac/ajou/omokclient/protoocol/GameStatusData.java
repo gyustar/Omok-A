@@ -4,8 +4,7 @@ public class GameStatusData {
     public static final int DEFAULT = 1000;
     public static final int ALL_ENTER = 1001;
     public static final int RUNNING = 1002;
-    public static final int END = 1003;
-    public static final int RESET = 1004;
+    public static final int RESET = 1003;
 
     private int gameStatus;
 
