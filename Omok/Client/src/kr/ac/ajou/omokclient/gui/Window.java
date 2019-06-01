@@ -16,7 +16,7 @@ public class Window extends PApplet implements GUI {
     private Button button;
     private List<PlayerInfo> players;
     private List<Stone> stones;
-    private List<Box> boxes;
+    private List<MsgBox> msgBoxes;
     private ClientThread thread;
     private int gameStatus;
     private int id;
@@ -35,7 +35,7 @@ public class Window extends PApplet implements GUI {
         button = Button.getInstance();
         players = new CopyOnWriteArrayList<>();
         stones = new CopyOnWriteArrayList<>();
-        boxes = new CopyOnWriteArrayList<>();
+        msgBoxes = new CopyOnWriteArrayList<>();
         myTurn = false;
         size(WINDOW_W, WINDOW_H);
     }
@@ -45,9 +45,9 @@ public class Window extends PApplet implements GUI {
         this.display(this);
         board.display(this);
         button.display(this);
-        for (Box b : boxes) {
-            if (boxes.size() > 1) {
-                boxes.remove(b);
+        for (MsgBox b : msgBoxes) {
+            if (msgBoxes.size() > 1) {
+                msgBoxes.remove(b);
                 continue;
             }
             b.display(this);
@@ -131,7 +131,7 @@ public class Window extends PApplet implements GUI {
         if (gameStatus == ALL_ENTER)
             button.active();
         else if (gameStatus == RUNNING)
-            boxes = boxes = new CopyOnWriteArrayList<>();
+            msgBoxes = msgBoxes = new CopyOnWriteArrayList<>();
         else if (gameStatus == RESET)
             resetGame();
     }
@@ -176,8 +176,12 @@ public class Window extends PApplet implements GUI {
         stones.add(s);
     }
 
-    public void makeBox(Box b) {
-        boxes.add(b);
+    public void makeMsgBox(MsgBox b) {
+        msgBoxes.add(b);
+    }
+
+    public void deleteMsgBox() {
+        msgBoxes = new CopyOnWriteArrayList<>();
     }
 
     public void activeButton() {
@@ -187,7 +191,7 @@ public class Window extends PApplet implements GUI {
     public void resetGame() {
         players = new CopyOnWriteArrayList<>();
         stones = new CopyOnWriteArrayList<>();
-        boxes = new CopyOnWriteArrayList<>();
+        msgBoxes = new CopyOnWriteArrayList<>();
         myTurn = false;
     }
 
@@ -195,7 +199,7 @@ public class Window extends PApplet implements GUI {
         Socket socket;
         try {
             socket = new Socket();
-            socket.connect(new InetSocketAddress("192.168.11.27", 5000));
+            socket.connect(new InetSocketAddress("172.30.27.70", 5000));
             System.out.println("연결 성공\n");
             thread = new ClientThread(socket, this);
             thread.start();

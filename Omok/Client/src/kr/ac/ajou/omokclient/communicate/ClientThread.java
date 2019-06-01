@@ -58,13 +58,11 @@ public class ClientThread extends Thread {
 
                 switch (type) {
                     case "GameStatusData":
-                        System.out.println(protocol.getData());
                         GameStatusData gameStatusData =
                                 gson.fromJson(protocol.getData(), GameStatusData.class);
                         analysisGameStatusData(gameStatusData);
                         break;
                     case "IdData":
-                        System.out.println(protocol.getData());
                         IdData idData =
                                 gson.fromJson(protocol.getData(), IdData.class);
                         analysisIdData(idData);
@@ -80,16 +78,10 @@ public class ClientThread extends Thread {
                                 gson.fromJson(protocol.getData(), ReadyData.class);
                         analysisReadyData(readyData);
                         break;
-                    case "CountData":
-                        CountData countData =
-                                gson.fromJson(protocol.getData(), CountData.class);
-                        analysisCountData(countData);
-                        break;
-                    case "DiceData":
-                        DiceData diceData =
-                                gson.fromJson(protocol.getData(), DiceData.class);
-                        analysisDiceData(diceData);
-                        break;
+                    case "MsgData":
+                        MsgData msgData =
+                                gson.fromJson(protocol.getData(), MsgData.class);
+                        analysisMsgData(msgData);
                     case "ColorData":
                         ColorData colorData =
                                 gson.fromJson(protocol.getData(), ColorData.class);
@@ -104,11 +96,6 @@ public class ClientThread extends Thread {
                         StoneData stoneData =
                                 gson.fromJson(protocol.getData(), StoneData.class);
                         analysisStoneData(stoneData);
-                        break;
-                    case "WinnerData":
-                        WinnerData winnerData =
-                                gson.fromJson(protocol.getData(), WinnerData.class);
-                        analysisWinnerData(winnerData);
                         break;
                 }
             }
@@ -137,7 +124,6 @@ public class ClientThread extends Thread {
 
     private void analysisIdData(IdData idData) {
         this.id = idData.getId();
-        System.out.println(id);
     }
 
     private void analysisPlayerData(PlayerData playerData) {
@@ -154,17 +140,12 @@ public class ClientThread extends Thread {
         window.readyPlayer(readyData.getReady());
     }
 
-    private void analysisCountData(CountData countData) {
-        String text = countData.getCount();
-        window.makeBox(new Box(text));
-    }
+    private void analysisMsgData(MsgData msgData) {
+        String msg = msgData.getMsg();
 
-    private void analysisDiceData(DiceData diceData) {
-        int diceOfPlayer0 = diceData.getDiceOfPlayer0();
-        int diceOfPlayer1 = diceData.getDiceOfPlayer1();
-        String text = "P0's dice number: " + diceOfPlayer0 + "\n"
-                + "P1's dice number: " + diceOfPlayer1;
-        window.makeBox(new Box(text));
+        if (msg.equals("Empty"))
+            window.deleteMsgBox();
+        else window.makeMsgBox(new MsgBox(msg));
     }
 
     private void analysisColorData(ColorData colorData) {
@@ -186,12 +167,6 @@ public class ClientThread extends Thread {
         int j = stoneData.getJ();
         int color = stoneData.getColor();
         window.addStone(new Stone(i, j, color));
-    }
-
-    private void analysisWinnerData(WinnerData winnerData) {
-        int winner = winnerData.getWinner();
-        String text = "P" + winner + " win!";
-        window.makeBox(new Box(text));
     }
 
 //    private void whenDefault() {

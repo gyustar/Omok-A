@@ -7,6 +7,7 @@ import kr.ac.ajou.omokserver.protocol.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static kr.ac.ajou.omokserver.protocol.GameStatusData.ALL_ENTER;
@@ -19,6 +20,7 @@ class ServerThread extends Thread {
 
     private static List<ServerThread> clients = new ArrayList<>();
     private static int n = 0;
+    private static int readyCount = 0;
 
     private Gson gson;
     private Socket socket;
@@ -116,22 +118,17 @@ class ServerThread extends Thread {
         }
     }
 
-//    private void throwDice() {
-//        int dice0 = (int) (Math.random() * 6) + 1;
-//        int dice1 = (int) (Math.random() * 6) + 1;
-//        while (dice0 == dice1) {
-//            dice1 = (int) (Math.random() * 6) + 1;
-//        }
-//        data[DICE_0] = (byte) dice0;
-//        data[DICE_1] = (byte) dice1;
-//        if (dice0 > dice1) {
-//            data[COLOR_0] = BLACK;
-//            data[COLOR_1] = WHITE;
-//        } else {
-//            data[COLOR_0] = WHITE;
-//            data[COLOR_1] = BLACK;
-//        }
-//    }
+    private MsgData throwDice() {
+        int dice0 = (int) (Math.random() * 6) + 1;
+        int dice1 = (int) (Math.random() * 6) + 1;
+        while (dice0 == dice1) {
+            dice1 = (int) (Math.random() * 6) + 1;
+        }
+
+        String msg = "P0's dice number: " + dice0 + "\n"
+                + "P1's dice number: " + dice1;
+        return new MsgData(msg);
+    }
 
     @Override
     public void run() {
@@ -245,7 +242,52 @@ class ServerThread extends Thread {
     }
 
     private void analysisReadyData(ReadyData readyData) {
+        String json = gson.toJson(readyData);
+        broadcast(new Protocol(json, "ReadyData"));
 
+        synchronized (MUTEX) {
+            readyCount++;
+            if (readyCount == 2) {
+                long start = System.currentTimeMillis();
+                long end = start;
+
+                MsgData msgData = new MsgData("3");
+                broadcast(new Protocol(gson.toJson(msgData), "MsgData"));
+
+                while ((end - start) < 1000.0) {
+                    end = System.currentTimeMillis();
+                }
+
+                start = System.currentTimeMillis();
+                end = start;
+                msgData = new MsgData("2");
+                broadcast(new Protocol(gson.toJson(msgData), "MsgData"));
+                while ((end - start) < 1000.0) {
+                    end = System.currentTimeMillis();
+                }
+
+                start = System.currentTimeMillis();
+                end = start;
+                msgData = new MsgData("1");
+                broadcast(new Protocol(gson.toJson(msgData), "MsgData"));
+                while ((end - start) < 1000.0) {
+                    end = System.currentTimeMillis();
+                }
+
+                start = System.currentTimeMillis();
+                end = start;
+                msgData = throwDice();
+                broadcast(new Protocol(gson.toJson(msgData), "MsgData"));
+                while ((end - start) < 2000.0) {
+                    end = System.currentTimeMillis();
+                }
+
+                start = System.currentTimeMillis();
+                end = start;
+                msgData = new MsgData("Empty");
+                broadcast(new Protocol(gson.toJson(msgData), "MsgData"));
+            }
+        }
     }
 
     private void analysisStoneData(StoneData stoneData) {
