@@ -320,6 +320,33 @@ class ServerThread extends Thread {
     }
 
     private void analysisStoneData(StoneData stoneData) {
+        broadcast(new Protocol(gson.toJson(stoneData), "StoneData"));
 
+        int i = stoneData.getI();
+        int j = stoneData.getJ();
+        int color = stoneData.getColor();
+        omok.putStone(i, j, color);
+
+        if (omok.winCheck(i, j)) {
+            long start = System.currentTimeMillis();
+            long end = start;
+
+            String msg = "P" + id + " win!!";
+            MsgData msgData = new MsgData(msg);
+            broadcast(new Protocol(gson.toJson(msgData), "MsgData"));
+
+            GameStatusData gameStatusData = new GameStatusData(END);
+            broadcast(new Protocol(gson.toJson(gameStatusData), "GameStatusData"));
+
+            while ((end - start) < 3000.0) {
+                end = System.currentTimeMillis();
+            }
+
+            gameStatusData = new GameStatusData(RESET);
+            broadcast(new Protocol(gson.toJson(gameStatusData), "GameStatusData"));
+        } else {
+            TurnData turnData = new TurnData((id * -1) + 1);
+            broadcast(new Protocol(gson.toJson(turnData), "TurnData"));
+        }
     }
 }
