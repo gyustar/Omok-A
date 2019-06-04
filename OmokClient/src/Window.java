@@ -69,7 +69,6 @@ public class Window extends PApplet implements GUI {
     public void mousePressed() {
         if (button.isMouseOver(this))
             button.click();
-
         if (gameState == GameStateData.RUNNING
                 && checkMouse() && mouseButton == LEFT) {
             int i = convertToIndex(mouseY);
@@ -161,11 +160,11 @@ public class Window extends PApplet implements GUI {
         stones.add(s);
     }
 
-    void makeMsgBox(Box b) {
+    void makeBox(Box b) {
         Boxes.add(b);
     }
 
-    void deleteMsgBox() {
+    void deleteBox() {
         Boxes = new CopyOnWriteArrayList<>();
     }
 

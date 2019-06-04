@@ -44,7 +44,6 @@ public class ClientThread extends Thread {
                 if (ret == -1) {
                     break;
                 }
-
                 String json = new String(data, 0, len);
                 Protocol protocol = gson.fromJson(json, Protocol.class);
                 String type = protocol.getType();
@@ -53,41 +52,41 @@ public class ClientThread extends Thread {
                     case "GameStateData":
                         GameStateData gameStateData =
                                 gson.fromJson(protocol.getData(), GameStateData.class);
-                        analysisGameStateData(gameStateData);
+                        checkGameStateData(gameStateData);
                         break;
                     case "IdData":
                         IdData idData =
                                 gson.fromJson(protocol.getData(), IdData.class);
-                        analysisIdData(idData);
+                        checkIdData(idData);
                         break;
                     case "PlayerData":
                         PlayerData playerData =
                                 gson.fromJson(protocol.getData(), PlayerData.class);
-                        analysisPlayerData(playerData);
+                        checkPlayerData(playerData);
                         break;
                     case "ReadyData":
                         ReadyData readyData =
                                 gson.fromJson(protocol.getData(), ReadyData.class);
-                        analysisReadyData(readyData);
+                        checkReadyData(readyData);
                         break;
                     case "MsgData":
                         MsgData msgData =
                                 gson.fromJson(protocol.getData(), MsgData.class);
-                        analysisMsgData(msgData);
+                        checkMsgData(msgData);
                     case "ColorData":
                         ColorData colorData =
                                 gson.fromJson(protocol.getData(), ColorData.class);
-                        analysisColorData(colorData);
+                        checkColorData(colorData);
                         break;
                     case "TurnData":
                         TurnData turnData =
                                 gson.fromJson(protocol.getData(), TurnData.class);
-                        analysisTurnData(turnData);
+                        checkTurnData(turnData);
                         break;
                     case "StoneData":
                         StoneData stoneData =
                                 gson.fromJson(protocol.getData(), StoneData.class);
-                        analysisStoneData(stoneData);
+                        checkStoneData(stoneData);
                         break;
                 }
             }
@@ -109,16 +108,16 @@ public class ClientThread extends Thread {
         }
     }
 
-    private void analysisGameStateData(GameStateData gameStateData) {
+    private void checkGameStateData(GameStateData gameStateData) {
         int gameState = gameStateData.getGameState();
         window.setGameState(gameState);
     }
 
-    private void analysisIdData(IdData idData) {
+    private void checkIdData(IdData idData) {
         this.id = idData.getId();
     }
 
-    private void analysisPlayerData(PlayerData playerData) {
+    private void checkPlayerData(PlayerData playerData) {
         int tempId = playerData.getId();
         if (tempId == 0) {
             window.addPlayer(tempId, id == tempId);
@@ -128,18 +127,18 @@ public class ClientThread extends Thread {
         }
     }
 
-    private void analysisReadyData(ReadyData readyData) {
+    private void checkReadyData(ReadyData readyData) {
         window.readyPlayer(readyData.getReady());
     }
 
-    private void analysisMsgData(MsgData msgData) {
+    private void checkMsgData(MsgData msgData) {
         String msg = msgData.getMsg();
         if (msg.equals("Empty"))
-            window.deleteMsgBox();
-        else window.makeMsgBox(new Box(msg));
+            window.deleteBox();
+        else window.makeBox(new Box(msg));
     }
 
-    private void analysisColorData(ColorData colorData) {
+    private void checkColorData(ColorData colorData) {
         int player0Color = colorData.getPlayer0Color();
         int player1Color = colorData.getPlayer1Color();
         window.setPlayerColor(player0Color, player1Color);
@@ -147,12 +146,12 @@ public class ClientThread extends Thread {
         else if (this.id == 1) color = player1Color;
     }
 
-    private void analysisTurnData(TurnData turnData) {
+    private void checkTurnData(TurnData turnData) {
         int turn = turnData.getTurn();
         window.changeTurn(turn);
     }
 
-    private void analysisStoneData(StoneData stoneData) {
+    private void checkStoneData(StoneData stoneData) {
         int i = stoneData.getI();
         int j = stoneData.getJ();
         int color = stoneData.getColor();
