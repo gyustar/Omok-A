@@ -82,7 +82,7 @@ public class Window extends PApplet implements GUI {
         if (button.isMouseOver(this)) {
             button.release();
             button.unactive();
-            thread.amReady();
+            thread.isReady();
         }
     }
 

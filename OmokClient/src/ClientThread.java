@@ -108,6 +108,28 @@ public class ClientThread extends Thread {
         }
     }
 
+    synchronized void putStone(int i, int j) {
+        StoneData stoneData = new StoneData(i, j, color);
+        String json = gson.toJson(stoneData);
+        Protocol protocol = new Protocol(json, "StoneData");
+        sendData(protocol);
+    }
+
+    synchronized void isReady() {
+        ReadyData readyData = new ReadyData(id);
+        String json = gson.toJson(readyData);
+        Protocol protocol = new Protocol(json, "ReadyData");
+        sendData(protocol);
+    }
+
+    private void checkColorData(ColorData colorData) {
+        int player0Color = colorData.getPlayer0Color();
+        int player1Color = colorData.getPlayer1Color();
+        window.setPlayerColor(player0Color, player1Color);
+        if (this.id == 0) color = player0Color;
+        else if (this.id == 1) color = player1Color;
+    }
+
     private void checkGameStateData(GameStateData gameStateData) {
         int gameState = gameStateData.getGameState();
         window.setGameState(gameState);
@@ -115,6 +137,13 @@ public class ClientThread extends Thread {
 
     private void checkIdData(IdData idData) {
         this.id = idData.getId();
+    }
+
+    private void checkMsgData(MsgData msgData) {
+        String msg = msgData.getMsg();
+        if (msg.equals("Empty"))
+            window.deleteBox();
+        else window.makeBox(new Box(msg));
     }
 
     private void checkPlayerData(PlayerData playerData) {
@@ -131,26 +160,6 @@ public class ClientThread extends Thread {
         window.readyPlayer(readyData.getReady());
     }
 
-    private void checkMsgData(MsgData msgData) {
-        String msg = msgData.getMsg();
-        if (msg.equals("Empty"))
-            window.deleteBox();
-        else window.makeBox(new Box(msg));
-    }
-
-    private void checkColorData(ColorData colorData) {
-        int player0Color = colorData.getPlayer0Color();
-        int player1Color = colorData.getPlayer1Color();
-        window.setPlayerColor(player0Color, player1Color);
-        if (this.id == 0) color = player0Color;
-        else if (this.id == 1) color = player1Color;
-    }
-
-    private void checkTurnData(TurnData turnData) {
-        int turn = turnData.getTurn();
-        window.changeTurn(turn);
-    }
-
     private void checkStoneData(StoneData stoneData) {
         int i = stoneData.getI();
         int j = stoneData.getJ();
@@ -158,17 +167,8 @@ public class ClientThread extends Thread {
         window.addStone(new Stone(i, j, color));
     }
 
-    synchronized void putStone(int i, int j) {
-        StoneData stoneData = new StoneData(i, j, color);
-        String json = gson.toJson(stoneData);
-        Protocol protocol = new Protocol(json, "StoneData");
-        sendData(protocol);
-    }
-
-    synchronized void amReady() {
-        ReadyData readyData = new ReadyData(id);
-        String json = gson.toJson(readyData);
-        Protocol protocol = new Protocol(json, "ReadyData");
-        sendData(protocol);
+    private void checkTurnData(TurnData turnData) {
+        int turn = turnData.getTurn();
+        window.changeTurn(turn);
     }
 }
