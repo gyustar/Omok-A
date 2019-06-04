@@ -108,7 +108,6 @@ class ServerThread extends Thread {
         String json = gson.toJson(protocol);
         data = json.getBytes();
         int len = data.length;
-
         synchronized (MUTEX) {
             for (int i = 0; i < clients.size(); ++i) {
                 ServerThread t = clients.get(i);
