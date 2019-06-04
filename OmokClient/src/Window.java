@@ -24,13 +24,13 @@ public class Window extends PApplet implements GUI {
 
     @Override
     public void settings() {
+        size(Settings.WINDOW_W, Settings.WINDOW_H);
         board = Board.getInstance();
         button = Button.getInstance();
         players = new CopyOnWriteArrayList<>();
         stones = new CopyOnWriteArrayList<>();
         Boxes = new CopyOnWriteArrayList<>();
         myTurn = false;
-        size(Settings.WINDOW_W, Settings.WINDOW_H);
     }
 
     @Override
@@ -38,6 +38,8 @@ public class Window extends PApplet implements GUI {
         this.display(this);
         board.display(this);
         button.display(this);
+        for (Player p : players) p.display(this);
+        for (Stone s : stones) s.display(this);
         for (Box b : Boxes) {
             if (Boxes.size() > 1) {
                 Boxes.remove(b);
@@ -45,8 +47,6 @@ public class Window extends PApplet implements GUI {
             }
             b.display(this);
         }
-        for (Player p : players) p.display(this);
-        for (Stone s : stones) s.display(this);
     }
 
     private void mouseEvent() {
