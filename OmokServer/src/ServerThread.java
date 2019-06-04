@@ -5,7 +5,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-
 class ServerThread extends Thread {
     private static final int BLACK = 1;
     private static final int WHITE = -1;
@@ -38,6 +37,7 @@ class ServerThread extends Thread {
         omok = new Omok();
         gson = new Gson();
         data = new byte[1024];
+
         color = NONE;
 
         synchronized (MUTEX) {
@@ -47,6 +47,7 @@ class ServerThread extends Thread {
 
         if (n == 1) sendGameStateData(GameStateData.DEFAULT);
         else if (n == 2) sendGameStateData(GameStateData.ALL_ENTER);
+
         sendIdData();
         sendPlayerData();
     }
@@ -190,12 +191,12 @@ class ServerThread extends Thread {
                     case "ReadyData":
                         ReadyData readyData =
                                 gson.fromJson(protocol.getData(), ReadyData.class);
-                        analysisReadyData(readyData);
+                        checkReadyData(readyData);
                         break;
                     case "StoneData":
                         StoneData stoneData =
                                 gson.fromJson(protocol.getData(), StoneData.class);
-                        analysisStoneData(stoneData);
+                        checkStoneData(stoneData);
                         break;
                 }
             }
@@ -207,7 +208,7 @@ class ServerThread extends Thread {
         }
     }
 
-    private void analysisReadyData(ReadyData readyData) {
+    private void checkReadyData(ReadyData readyData) {
         String json = gson.toJson(readyData);
         broadcast(new Protocol(json, "ReadyData"));
 
@@ -276,7 +277,7 @@ class ServerThread extends Thread {
         }
     }
 
-    private void analysisStoneData(StoneData stoneData) {
+    private void checkStoneData(StoneData stoneData) {
         broadcast(new Protocol(gson.toJson(stoneData), "StoneData"));
 
         int i = stoneData.getI();
