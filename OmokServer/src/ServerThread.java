@@ -154,8 +154,8 @@ class ServerThread extends Thread {
             else color = BLACK;
         }
 
-        String msg = "P0's dice number: " + dice0 + "\n"
-                + "P1's dice number: " + dice1;
+        String msg = "Player0: " + dice0 + "\n"
+                + "Player1: " + dice1;
         return new MsgData(msg);
     }
 
