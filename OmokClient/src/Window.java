@@ -124,7 +124,7 @@ public class Window extends PApplet implements GUI {
             button.active();
         else if (gameState == GameStateData.RUNNING)
             Boxes = new CopyOnWriteArrayList<>();
-        else if (gameState == GameStateData.RESET)
+        else if (gameState == GameStateData.END)
             resetGame();
     }
 
