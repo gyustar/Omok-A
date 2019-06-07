@@ -144,11 +144,19 @@ public class Window extends PApplet implements GUI {
     }
 
     private void analysisRoomInfoData(RoomInfoData roomInfoData) {
-        if (position == LOBBY) {
-            RoomInfo roomInfo = new RoomInfo(roomInfoData.getRoomNumber());
+        int roomNumber = roomInfoData.getRoomNumber();
+
+        if (position == LOBBY && rooms.size() > roomNumber) {
+            RoomInfo roomInfo = rooms.get(roomInfoData.getRoomNumber());
             roomInfo.setNumOfPlayer(roomInfoData.getNumOfPlayer());
-            rooms.add(roomInfo);
-            if (rooms.size() >= 9) createRoomButton.deactivate();
+        } else {
+            if (position == LOBBY) {
+                rooms.size();
+                RoomInfo roomInfo = new RoomInfo(roomInfoData.getRoomNumber());
+                roomInfo.setNumOfPlayer(roomInfoData.getNumOfPlayer());
+                rooms.add(roomInfo);
+                if (rooms.size() >= 9) createRoomButton.deactivate();
+            }
         }
     }
 
@@ -352,7 +360,7 @@ public class Window extends PApplet implements GUI {
     private void connect() {
         try {
             Socket socket = new Socket();
-            socket.connect(new InetSocketAddress("192.168.0.3", 5000));
+            socket.connect(new InetSocketAddress("192.168.11.27", 5000));
             os = socket.getOutputStream();
             dos = new DataOutputStream(os);
             System.out.println("연결 성공\n");

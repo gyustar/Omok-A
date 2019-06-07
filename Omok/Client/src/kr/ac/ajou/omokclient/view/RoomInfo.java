@@ -27,7 +27,7 @@ public class RoomInfo implements GUI {
 
     void setNumOfPlayer(int numOfPlayer) {
         this.numOfPlayer = numOfPlayer;
-        if (this.numOfPlayer == 2) {
+        if (this.numOfPlayer >= 2) {
             enterButton.deactivate();
         } else if (this.numOfPlayer == 0 || this.numOfPlayer == 1) {
             enterButton.activate();
