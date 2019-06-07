@@ -56,6 +56,10 @@ public class RoomInfo implements GUI {
         enterButton.release();
     }
 
+    void clickEnterButton() {
+        enterButton.click();
+    }
+
     int getRoomNumber() {
         return roomNumber;
     }

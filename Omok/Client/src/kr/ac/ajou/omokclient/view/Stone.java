@@ -9,7 +9,7 @@ public class Stone implements GUI {
     private final int j;
     private final int color;
 
-    public Stone(int i, int j, int color) {
+    Stone(int i, int j, int color) {
         this.i = i;
         this.j = j;
         this.color = color;

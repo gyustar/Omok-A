@@ -42,10 +42,6 @@ public class PlayerInfo implements GUI {
         turn = (this.id == id);
     }
 
-    boolean hasInfo() {
-        return stoneColor != NONE;
-    }
-
     void doReady() {
         this.ready = true;
     }

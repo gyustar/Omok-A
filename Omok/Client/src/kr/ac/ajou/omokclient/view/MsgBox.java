@@ -12,7 +12,7 @@ public class MsgBox implements GUI {
 
     private String msg;
 
-    public MsgBox(String msg) {
+    MsgBox(String msg) {
         this.msg = msg;
     }
 

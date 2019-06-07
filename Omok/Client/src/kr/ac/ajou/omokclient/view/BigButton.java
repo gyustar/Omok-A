@@ -3,8 +3,6 @@ package kr.ac.ajou.omokclient.view;
 import processing.core.PApplet;
 
 import static kr.ac.ajou.omokclient.view.Constant.*;
-import static processing.core.PConstants.ARROW;
-import static processing.core.PConstants.HAND;
 
 public class BigButton implements Button {
     private int x;
@@ -53,16 +51,7 @@ public class BigButton implements Button {
         p.textSize(textSize);
         p.textAlign(p.CENTER, p.CENTER);
         p.text(label, x + w / 2, y + h / 2 - 3);
-
-        if (this.isMouseOver(p)) {
-            p.cursor(HAND);
-            if (p.mousePressed) onClick = true;
-        } else p.cursor(ARROW);
     }
-
-//    boolean isReleased(PApplet p) {
-//        return this.isMouseOver(p) && p.mouseReleased();
-//    }
 
     @Override
     public void click() {

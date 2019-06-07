@@ -7,12 +7,12 @@ import kr.ac.ajou.omokclient.protoocol.*;
 import java.io.*;
 import java.net.Socket;
 
-public class ClientThread extends Thread {
+public class ReceiveThread extends Thread {
     private Socket socket;
     private Gson gson;
     private Window window;
 
-    public ClientThread(Socket socket, Window window) {
+    public ReceiveThread(Socket socket, Window window) {
         this.socket = socket;
         this.window = window;
         gson = new Gson();

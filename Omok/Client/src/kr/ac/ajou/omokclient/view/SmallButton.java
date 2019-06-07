@@ -29,10 +29,6 @@ public class SmallButton implements Button {
         textSize = TEXT_SIZE / 2;
     }
 
-    void setY(int outlineUpY) {
-        y = outlineUpY + GAP;
-    }
-
     @Override
     public void display(PApplet p) {
         if (onClick) fillGrey(p);
@@ -45,10 +41,10 @@ public class SmallButton implements Button {
         p.textAlign(p.CENTER, p.CENTER);
         p.text(label, x + w / 2, y + h / 2);
 
-        if (this.isMouseOver(p)) {
-            p.cursor(HAND);
-            if (p.mousePressed) onClick = true;
-        } else p.cursor(ARROW);
+//        if (this.isMouseOver(p)) {
+//            p.cursor(HAND);
+//            if (p.mousePressed) onClick = true;
+//        } else p.cursor(ARROW);
     }
 
     @Override

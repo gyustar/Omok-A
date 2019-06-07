@@ -12,13 +12,12 @@ import static kr.ac.ajou.omokserver.protocol.GameStatusData.*;
 import static kr.ac.ajou.omokserver.protocol.LobbyData.*;
 
 class ServerThread extends Thread {
+    private static final Object MUTEX = new Object();
     private static final int BLACK = 1;
     private static final int WHITE = -1;
     private static final int NONE = 0;
     private static final int LOBBY = 1010;
     private static final int ROOM = 1011;
-
-    private static final Object MUTEX = new Object();
 
     private static List<ServerThread> clients = new CopyOnWriteArrayList<>();
     private static List<GameRoom> gameRooms = new CopyOnWriteArrayList<>();
@@ -139,25 +138,6 @@ class ServerThread extends Thread {
                     new RoomInfoData(roomNumber, gameRoom.getPlayerCount());
             String json = gson.toJson(roomInfoData);
             broadcastLobby(new Protocol(json, "RoomInfoData"));
-        }
-    }
-
-    private void broadcast(Protocol protocol) {
-        String json = gson.toJson(protocol);
-        data = json.getBytes();
-        int len = data.length;
-
-        synchronized (MUTEX) {
-            for (int i = 0; i < clients.size(); ++i) {
-                ServerThread t = clients.get(i);
-                try {
-                    t.dos.writeInt(len);
-                    t.os.write(data, 0, len);
-                } catch (IOException e) {
-                    clients.remove(t);
-                    clientExit(t);
-                }
-            }
         }
     }
 

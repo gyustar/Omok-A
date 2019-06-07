@@ -5,7 +5,7 @@ import static kr.ac.ajou.omokclient.view.Constant.*;
 import static kr.ac.ajou.omokclient.protoocol.GameStatusData.*;
 
 import com.google.gson.Gson;
-import kr.ac.ajou.omokclient.communicate.ClientThread;
+import kr.ac.ajou.omokclient.communicate.ReceiveThread;
 import kr.ac.ajou.omokclient.protoocol.*;
 import processing.core.PApplet;
 
@@ -14,29 +14,33 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Window extends PApplet implements GUI {
-    private Socket socket;
+    private Gson gson;
     private OutputStream os;
     private DataOutputStream dos;
-    private Gson gson;
     private Queue<Protocol> queue;
+    private int position;
+
+    private int numOfPlayer;
+    private Button createRoomButton;
+    private List<RoomInfo> rooms;
+    private RoomInfo roomTemp;
+
+    private int id;
+    private int gameStatus;
+    private boolean myTurn;
+    private int color;
     private Board board;
     private Button readyButton;
     private List<PlayerInfo> players;
     private List<Stone> stones;
     private List<MsgBox> msgBoxes;
-    private ClientThread thread;
-    private int gameStatus;
-    private boolean myTurn;
-    private Lobby lobby;
-    private int id;
-    private int color;
-    private int position;
 
     @Override
     public void setup() {
@@ -47,13 +51,18 @@ public class Window extends PApplet implements GUI {
     public void settings() {
         gson = new Gson();
         queue = new ConcurrentLinkedQueue<>();
-        lobby = new Lobby();
+
+        rooms = new ArrayList<>();
+        createRoomButton = new BigButton("CREATE ROOM");
+        createRoomButton.activate();
+
         board = Board.getInstance();
         readyButton = new BigButton("READY");
         players = new CopyOnWriteArrayList<>();
         stones = new CopyOnWriteArrayList<>();
         msgBoxes = new CopyOnWriteArrayList<>();
         myTurn = false;
+
         size(WINDOW_W, WINDOW_H);
     }
 
@@ -114,21 +123,13 @@ public class Window extends PApplet implements GUI {
                     break;
             }
         }
+
         this.display(this);
+
         if (position == LOBBY) {
-            lobby.display(this);
+            displayLobby();
         } else if (position == ROOM) {
-            board.display(this);
-            readyButton.display(this);
-            for (MsgBox b : msgBoxes) {
-                if (msgBoxes.size() > 1) {
-                    msgBoxes.remove(b);
-                    continue;
-                }
-                b.display(this);
-            }
-            for (PlayerInfo p : players) p.display(this);
-            for (Stone s : stones) s.display(this);
+            displayRoom();
         }
     }
 
@@ -136,7 +137,7 @@ public class Window extends PApplet implements GUI {
         short header = lobbyData.getHeader();
         if (header == NUM_OF_PLAYER) {
             position = LOBBY;
-            lobby.setNumOfPlayer(lobbyData.getNumOfPlayer());
+            numOfPlayer = lobbyData.getNumOfPlayer();
         } else if (header == ENTER_ROOM) {
             position = ROOM;
         }
@@ -144,8 +145,10 @@ public class Window extends PApplet implements GUI {
 
     private void analysisRoomInfoData(RoomInfoData roomInfoData) {
         if (position == LOBBY) {
-            lobby.addRoom(roomInfoData.getRoomNumber(),
-                    roomInfoData.getNumOfPlayer());
+            RoomInfo roomInfo = new RoomInfo(roomInfoData.getRoomNumber());
+            roomInfo.setNumOfPlayer(roomInfoData.getNumOfPlayer());
+            rooms.add(roomInfo);
+            if (rooms.size() >= 9) createRoomButton.deactivate();
         }
     }
 
@@ -223,7 +226,12 @@ public class Window extends PApplet implements GUI {
     }
 
     private void mouseEvent() {
-        if (position == ROOM) {
+        if (position == LOBBY) {
+            if (createRoomButton.isMouseOver(this)) cursor(HAND);
+            else if (onEnterButton()) cursor(HAND);
+            else cursor(ARROW);
+
+        } else if (position == ROOM) {
             switch (gameStatus) {
                 case DEFAULT:
                     cursor(ARROW);
@@ -233,25 +241,37 @@ public class Window extends PApplet implements GUI {
                     else cursor(ARROW);
                     break;
                 case RUNNING:
-                    if (checkMouse()) cursor(HAND);
+                    if (checkPutStone(  )) cursor(HAND);
                     else cursor(ARROW);
                     break;
             }
-        } else if (position == LOBBY) {
-
-
         }
     }
 
     @Override
     public void mousePressed() {
-        if (readyButton.isMouseOver(this)
-                && mouseButton == LEFT) {
+        if (mouseButton == LEFT && position == LOBBY &&
+                createRoomButton.isMouseOver(this)) {
+            createRoomButton.click();
+        }
+
+        if (mouseButton == LEFT && position == LOBBY) {
+            for (RoomInfo roomInfo : rooms) {
+                if (roomInfo.onEnterButton(this)) {
+                    roomTemp = roomInfo;
+                    roomTemp.clickEnterButton();
+                    break;
+                }
+            }
+        }
+
+        if (mouseButton == LEFT && position == ROOM &&
+                readyButton.isMouseOver(this)) {
             readyButton.click();
         }
 
-        if (gameStatus == RUNNING
-                && checkMouse() && mouseButton == LEFT) {
+        if (mouseButton == LEFT && position == ROOM &&
+                gameStatus == RUNNING && checkPutStone()) {
             int i = convertToIndex(mouseY);
             int j = convertToIndex(mouseX);
             sendStoneData(i, j);
@@ -260,27 +280,36 @@ public class Window extends PApplet implements GUI {
 
     @Override
     public void mouseReleased() {
-        if (lobby.onCreateRoomButton(this) && mouseButton == LEFT &&
-                position == LOBBY) {
-            lobby.releaseCreateRoomButton();
+        if (mouseButton == LEFT && position == LOBBY &&
+                createRoomButton.isMouseOver(this)) {
+            createRoomButton.release();
             sendCreateRoom();
         }
 
-        if (lobby.onEnterButton(this) && mouseButton == LEFT &&
-                position == LOBBY) {
-            lobby.releaseEnterButton();
-            sendEnterRoom(lobby.getRoomNumberTemp());
+        if (mouseButton == LEFT && position == LOBBY &&
+                onEnterButton()) {
+            roomTemp.releaseEnterButton();
+            sendEnterRoom(roomTemp.getRoomNumber());
         }
 
-        if (readyButton.isMouseOver(this) && mouseButton == LEFT) {
+        if (mouseButton == LEFT && position == ROOM &&
+                readyButton.isMouseOver(this)) {
             readyButton.release();
             readyButton.deactivate();
             sendReadyData();
         }
-
     }
 
-    private boolean checkMouse() {
+    private boolean onEnterButton() {
+        for (RoomInfo roomInfo : rooms) {
+            if (roomInfo.onEnterButton(this)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkPutStone() {
         int i = convertToIndex(mouseY);
         int j = convertToIndex(mouseX);
 
@@ -322,12 +351,12 @@ public class Window extends PApplet implements GUI {
 
     private void connect() {
         try {
-            socket = new Socket();
-            socket.connect(new InetSocketAddress("192.168.11.27", 5000));
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress("192.168.0.3", 5000));
             os = socket.getOutputStream();
             dos = new DataOutputStream(os);
             System.out.println("연결 성공\n");
-            thread = new ClientThread(socket, this);
+            ReceiveThread thread = new ReceiveThread(socket, this);
             thread.start();
         } catch (
                 IOException e) {
@@ -382,6 +411,41 @@ public class Window extends PApplet implements GUI {
     public void display(PApplet p) {
         background(WHITE_COLOR);
         mouseEvent();
+    }
+
+    private void displayLobby() {
+        fillBlack(this);
+        textSize(TEXT_SIZE);
+        textAlign(CENTER, CENTER);
+        text("ROOM LIST", ROOM_LIST_X + ROOM_LIST_W / 2, ROOM_LIST_Y - BLOCK + 3);
+
+        fillWhite(this);
+        rect(ROOM_LIST_X, ROOM_LIST_Y, ROOM_LIST_W, ROOM_LIST_H);
+        for (RoomInfo roomInfo : rooms) {
+            roomInfo.display(this);
+        }
+
+        fillBlack(this);
+        textSize(TEXT_SIZE);
+        textAlign(CENTER, CENTER);
+        String text = "Players [" + numOfPlayer + "]";
+        text(text, WINDOW_W - BLOCK * 3, WINDOW_H - BUTTON_H - BLOCK * 3 + 5);
+
+        createRoomButton.display(this);
+    }
+
+    private void displayRoom() {
+        board.display(this);
+        readyButton.display(this);
+        for (MsgBox b : msgBoxes) {
+            if (msgBoxes.size() > 1) {
+                msgBoxes.remove(b);
+                continue;
+            }
+            b.display(this);
+        }
+        for (PlayerInfo p : players) p.display(this);
+        for (Stone s : stones) s.display(this);
     }
 
     public static void main(String[] args) {

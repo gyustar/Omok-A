@@ -1,6 +1,5 @@
 package kr.ac.ajou.omokserver.communicate;
 
-import kr.ac.ajou.omokserver.protocol.GameStatusData;
 import kr.ac.ajou.omokserver.util.Omok;
 
 import java.util.List;
@@ -9,13 +8,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static kr.ac.ajou.omokserver.protocol.GameStatusData.ALL_ENTER;
 import static kr.ac.ajou.omokserver.protocol.GameStatusData.DEFAULT;
 
-public class GameRoom {
+class GameRoom {
     private int roomNumber;
-    private int playerCount;
-    private Omok omok;
     private List<ServerThread> players;
-    private int gameStatus;
+    private int playerCount;
     private int readyCount;
+    private Omok omok;
 
     GameRoom(int roomNumber) {
         players = new CopyOnWriteArrayList<>();
@@ -23,7 +21,6 @@ public class GameRoom {
         omok = new Omok();
         playerCount = 0;
         readyCount = 0;
-        gameStatus = DEFAULT;
     }
 
     void enterPlayer(ServerThread serverThread) {

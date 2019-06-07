@@ -17,6 +17,11 @@ class Constant {
     static final int TEXT_SIZE = 20;
     static final int WHITE_COLOR = 255;
 
+    static final int ROOM_LIST_X = BLOCK;
+    static final int ROOM_LIST_Y = BLOCK * 3;
+    static final int ROOM_LIST_W = BOARD;
+    static final int ROOM_LIST_H = BUTTON_H * 9;
+
     static final int LOBBY = 1010;
     static final int ROOM = 1011;
 }
