@@ -16,14 +16,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library name="Gson">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/gson-2.8.5.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="protobuf" level="project" />
   </component>
 </module>

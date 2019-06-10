@@ -8,9 +8,9 @@
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
-      <library name="Gson">
+      <library name="protobuf">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/gson-2.8.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/protobuf-java-3.8.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
